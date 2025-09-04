@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis álbumes</title>
+  </head>
+  <body>
+    <%- include('../components/header') %>
+
+    <div class="container py-3">
+      <h1 class="h3">Mis álbumes</h1>
+
+      <% if (typeof flash !== 'undefined' && flash) { %>
+        <div class="alert alert-<%= flash.type === 'success' ? 'success' : 'danger' %> alert-dismissible fade show" role="alert">
+          <%= flash.text %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+      <% } %>
+
+      <!-- Formulario para crear álbum -->
+      <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+          <form action="/galeria/albums" method="post" class="row g-2 align-items-end">
+            <div class="col-12 col-md-4">
+              <label class="form-label">Nombre del álbum</label>
+              <input name="name" class="form-control" required placeholder="Ej: Vacaciones 2025">
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Descripción (opcional)</label>
+              <input name="description" class="form-control" placeholder="Breve descripción">
+            </div>
+            <div class="col-12 col-md-2">
+              <button class="btn btn-info w-100" style="color: white;">Crear</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Tarjetas de álbumes -->
+      <% if (!albums || albums.length === 0) { %>
+        <div class="alert alert-warning" role="alert">
+          Aún no creaste ningún álbum.
+        </div>
+      <% } else { %>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+          <% albums.forEach(a => { %>
+            <div class="col">
+              <div class="card h-100 shadow-sm">
+                <div class="ratio ratio-16x9 bg-body-secondary">
+                    <% if (a.coverPhotoId) { %>
+                        <img id="albumCover-<%= a.id %>"
+                            src="/galeria/media/<%= a.coverPhotoId %>"
+                            class="w-100 h-100 object-fit-cover" alt="">
+                    <% } else { %>
+                        <div id="albumCover-<%= a.id %>"
+                            class="d-flex justify-content-center align-items-center text-muted">
+                        Sin fotos
+                        </div>
+                    <% } %>
+                    </div>
+                <div class="card-body">
+                  <h5 class="card-title mb-1"><%= a.name %></h5>
+                  <p class="card-text small text-body-secondary mb-2"><%= a.description || 'Sin descripción' %></p>
+                  <div class="d-flex gap-2">
+                    <!-- Botón Ver ACTIVO -->
+                    <button
+                      class="btn btn-outline-success btn-sm js-album-open"
+                      data-album-id="<%= a.id %>"
+                      data-album-name="<%= a.name %>">
+                      Ver
+                    </button>
+                    <button class="btn btn-outline-info btn-sm disabled" disabled>Editar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- MODAL de Álbum -->
+    <div class="modal fade" id="albumModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              Álbum: <span id="albumTitle">—</span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Galería del álbum -->
+            <div id="albumGallery" class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
+              <!-- Thumbs aquí -->
+            </div>
+
+            <hr class="my-3">
+
+            <!-- Subida a álbum -->
+            <form id="albumUploadForm" class="d-flex gap-2 align-items-center">
+              <input id="albumPhotosInput" type="file" class="form-control" name="photos" accept="image/*" multiple>
+              <button id="albumUploadBtn" type="submit" class="btn btn-success">Agregar</button>
+            </form>
+            <div id="albumError" class="small text-danger mt-2 d-none">Error</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%- include('../components/footer') %>
+
+    <script>
+      (function () {
+        const albumModalEl   = document.getElementById('albumModal');
+        const albumModal     = new bootstrap.Modal(albumModalEl);
+        const albumTitle     = document.getElementById('albumTitle');
+        const albumGallery   = document.getElementById('albumGallery');
+        const albumUploadForm  = document.getElementById('albumUploadForm');
+        const albumPhotosInput = document.getElementById('albumPhotosInput');
+        const albumUploadBtn   = document.getElementById('albumUploadBtn');
+        const albumError       = document.getElementById('albumError');
+
+        let currentAlbumId = null;
+
+        function renderGallery(list) {
+          albumGallery.innerHTML = '';
+          if (!list || list.length === 0) {
+            albumGallery.innerHTML = '<div class="col-12"><div class="alert alert-warning mb-0">Este álbum no tiene fotos.</div></div>';
+            return;
+          }
+          list.forEach(p => {
+            const col = document.createElement('div');
+            col.className = 'col';
+            col.innerHTML = `
+              <div class="card h-100 shadow-sm">
+                <img src="/galeria/media/${p.id}" class="card-img-top img-fluid" alt="${p.title || ''}">
+                <div class="card-body p-2">
+                  <small class="text-muted text-truncate d-block">${p.title || ''}</small>
+                </div>
+              </div>
+            `;
+            albumGallery.appendChild(col);
+          });
+        }
+
+        // Abrir modal Ver
+        document.querySelectorAll('.js-album-open').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            currentAlbumId = btn.dataset.albumId;
+            albumTitle.textContent = btn.dataset.albumName || 'Álbum';
+            albumError.classList.add('d-none');
+            albumError.textContent = '';
+            albumGallery.innerHTML = '<div class="col-12 text-center py-5">Cargando…</div>';
+
+            albumModal.show();
+
+            try {
+              const resp = await fetch(`/galeria/albums/${currentAlbumId}/json`);
+              if (!resp.ok) throw new Error('load');
+              const data = await resp.json();
+              renderGallery(data.photos || []);
+            } catch (e) {
+              albumGallery.innerHTML = '<div class="col-12"><div class="alert alert-danger mb-0">No se pudo cargar el álbum.</div></div>';
+            }
+          });
+        });
+
+        // Subir fotos al álbum
+        albumUploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!currentAlbumId) return;
+        if (!albumPhotosInput.files.length) return;
+
+        albumUploadBtn.disabled = true;
+        albumError.classList.add('d-none');
+        albumError.textContent = '';
+
+        const fd = new FormData();
+        for (const f of albumPhotosInput.files) fd.append('photos', f);
+
+        try {
+            const resp = await fetch(`/galeria/albums/${currentAlbumId}/photos`, {
+            method: 'POST',
+            body: fd
+            });
+            const data = await resp.json().catch(() => ({}));
+
+            if (resp.ok && data.ok) {
+            // Recarga la lista del álbum (grilla del modal)
+            const r2 = await fetch(`/galeria/albums/${currentAlbumId}/json`);
+            const d2 = await r2.json();
+            renderGallery(d2.photos || []);
+            albumPhotosInput.value = '';
+
+            // === NUEVO: actualizar portada de la tarjeta del álbum ===
+            // 1) intenta usar la última creada que devolvió el POST
+            const lastFromUpload = Array.isArray(data.created) && data.created.length
+                ? data.created[data.created.length - 1].id
+                : null;
+
+            // 2) si no vino en el POST, usa la más reciente del JSON (orden DESC)
+            const latestId = lastFromUpload || (d2.photos && d2.photos.length ? d2.photos[0].id : null);
+
+            if (latestId) {
+                const coverEl = document.getElementById(`albumCover-${currentAlbumId}`);
+                const newSrc  = `/galeria/media/${latestId}?t=${Date.now()}`; // evita caché
+
+                if (coverEl) {
+                if (coverEl.tagName === 'IMG') {
+                    coverEl.src = newSrc;
+                } else {
+                    // si era el placeholder "Sin fotos", lo reemplazamos por la imagen
+                    coverEl.outerHTML = `<img id="albumCover-${currentAlbumId}"
+                                            src="${newSrc}"
+                                            class="w-100 h-100 object-fit-cover" alt="">`;
+                }
+                }
+            }
+            // === FIN actualización de portada ===
+
+            } else {
+            albumError.textContent = data?.error === 'album_not_found'
+                ? 'Álbum no encontrado.'
+                : 'No se pudo subir.';
+            albumError.classList.remove('d-none');
+            }
+        } catch (e) {
+            albumError.textContent = 'Error de red. Intenta de nuevo.';
+            albumError.classList.remove('d-none');
+        } finally {
+            albumUploadBtn.disabled = false;
+        }
+        });
+
+      })();
+    </script>
+  </body>
+</html>

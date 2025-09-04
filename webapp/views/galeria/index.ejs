@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mis fotos</title>
+</head>
+<body>
+  <%- include('../components/header') %>
+
+  <div class="container py-4">
+    <!-- FOTOS -->
+    <h1 class="h3 mb-3">Mis fotos</h1>
+
+    <% if (!photos || photos.length === 0) { %>
+      <div class="alert alert-info">
+        No hay fotos porque todavía no has guardado ninguna.
+      </div>
+    <% } else { %>
+      <!-- Grilla responsiva -->
+      <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
+        <% photos.forEach((p, idx) => { %>
+          <div class="col">
+            <div class="card h-100 shadow-sm">
+              <img
+                src="/galeria/media/<%= p.id %>"
+                class="card-img-top img-fluid js-photo"
+                data-index="<%= idx %>"
+                data-id="<%= p.id %>"
+                alt="<%= p.titulo || p.OriginalName || p.filename %>"
+                style="cursor:pointer"
+              >
+              <div class="card-body p-2">
+                <small class="text-muted text-truncate d-block">
+                  <%= p.titulo || p.OriginalName || p.filename %>
+                </small>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <hr class="my-4">
+
+    <!-- ÁLBUMES -->
+    <h2 class="h4 mb-3">Mis álbumes</h2>
+<% if (!albums || albums.length === 0) { %>
+  <div class="alert alert-warning" role="alert">
+    Aún no creaste ningún álbum.
+  </div>
+<% } else { %>
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+    <% albums.forEach(a => { %>
+      <div class="col">
+        <div class="card h-100 shadow-sm">
+          <div class="ratio ratio-16x9 bg-body-secondary">
+                    <% if (a.coverPhotoId) { %>
+                        <img id="albumCover-<%= a.id %>"
+                            src="/galeria/media/<%= a.coverPhotoId %>"
+                            class="w-100 h-100 object-fit-cover" alt="">
+                    <% } else { %>
+                        <div id="albumCover-<%= a.id %>"
+                            class="d-flex justify-content-center align-items-center text-muted">
+                        Sin fotos
+                        </div>
+                    <% } %>
+                    </div>
+          <div class="card-body">
+            <h5 class="card-title mb-1"><%= a.name %></h5>
+            <p class="card-text small text-body-secondary mb-2"><%= a.description || 'Sin descripción' %></p>
+            <a class="btn btn-outline-success btn-sm js-album-open"
+                data-album-id="<%= a.id %>"
+                data-album-name="<%= a.name %>">Ver</a>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+
+  <!-- MODAL + CAROUSEL -->
+  <div class="modal fade" id="photoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" style="--bs-modal-width: 320px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="photoTitle">Vista previa</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <img id="photoImg" src="" class="img-fluid rounded" alt="">
+  <!-- nuevo: tira de miniaturas cuando vienes desde un álbum -->
+  <div id="albumThumbs" class="d-flex flex-wrap gap-2 mt-3"></div>
+      </div>
+      <div class="modal-footer">
+        <!-- El botón dice “Eliminar” y por ahora NO hace nada -->
+         <button type="button" class="btn btn-info" style="color: white;" id="btnAddToAlbum" 
+         data-photo-id="">Agregar al album</button>
+        <button type="button" class="btn btn-danger" id="btnDelete" data-photo-id="">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="--bs-modal-width:360px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">¿Eliminar esta foto?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex align-items-center gap-3">
+          <img id="confirmThumb" src="" class="img-thumbnail" style="width:96px;height:96px;object-fit:cover" alt="">
+          <div class="small text-muted" id="confirmName"></div>
+        </div>
+        <div class="text-danger small mt-2 d-none" id="deleteError">No se pudo eliminar. Intenta de nuevo.</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="btnConfirmDelete" data-photo-id="">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Ver álbum -->
+<div class="modal fade" id="albumModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Álbum: <span id="albumTitle">—</span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div id="albumGallery" class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
+          <!-- aquí se renderizan las fotos del álbum -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Agregar al álbum -->
+<div class="modal fade" id="addToAlbumModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="--bs-modal-width:380px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Agregar a un álbum</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addToAlbumForm" class="d-grid gap-2">
+          <select id="albumSelect" class="form-select" required>
+            <option value="">Selecciona un álbum…</option>
+          </select>
+          <div id="addToAlbumError" class="text-danger small d-none">Error</div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-info" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" form="addToAlbumForm" class="btn btn-success" id="btnConfirmAdd">Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+  <%- include('../components/footer') %>
+
+  <script>
+  // Abre el modal en el slide correspondiente al thumbnail clickeado
+  (function () {
+    const modalEl   = document.getElementById('photoModal');
+    const modal     = new bootstrap.Modal(modalEl);
+    const imgEl     = document.getElementById('photoImg');
+    const titleEl   = document.getElementById('photoTitle');
+    const btnDelete = document.getElementById('btnDelete');
+    const btnAddToAlbum = document.getElementById('btnAddToAlbum');
+
+    // >>> agregado: refs para el modal de confirmación
+    const confirmModalEl = document.getElementById('confirmDeleteModal');
+    const confirmModal   = new bootstrap.Modal(confirmModalEl);
+    const confirmImg     = document.getElementById('confirmThumb');
+    const confirmName    = document.getElementById('confirmName');
+    const btnConfirm     = document.getElementById('btnConfirmDelete');
+    const deleteError    = document.getElementById('deleteError');
+
+    // >>> agregado: alias para que photoModal.hide() funcione sin cambiar tu código
+    const photoModal = modal;
+
+    // >>> agregado: estado de contexto (si vienes desde álbum)
+    let fromAlbum = false;
+
+    document.querySelectorAll('.js-photo').forEach(th => {
+      th.addEventListener('click', () => {
+        const src   = th.getAttribute('src');
+        const title = th.dataset.title || th.getAttribute('alt') || 'Imagen';
+        const id    = th.dataset.id;
+
+        imgEl.src = src;
+        imgEl.alt = title;
+        titleEl.textContent = title;
+
+        // >>> agregado: guarda datos para usar en confirmación
+        btnDelete.dataset.photoId  = id;
+        btnDelete.dataset.thumbSrc = src;
+        btnDelete.dataset.title    = title;
+
+        // si vienes de “Mis fotos”, muestra “Agregar al álbum”
+        if (btnAddToAlbum) btnAddToAlbum.classList.remove('d-none');
+        fromAlbum = false;
+
+        modal.show();
+      });
+    });
+
+    // Por ahora, “Eliminar” NO hace nada; solo mostramos por consola.
+    btnDelete.addEventListener('click', () => {
+      const id    = btnDelete.dataset.photoId;
+      const src   = btnDelete.dataset.thumbSrc;
+      const title = btnDelete.dataset.title;
+
+      // pinta datos en modal de confirmación
+      confirmImg.src = src;
+      confirmImg.alt = title;
+      confirmName.textContent = title;
+      btnConfirm.dataset.photoId = id;
+
+      // limpia mensaje de error
+      deleteError.classList.add('d-none');
+      deleteError.textContent = 'No se pudo eliminar. Intenta de nuevo.';
+
+      confirmModal.show();
+    });
+
+    // Confirmar eliminación → fetch DELETE
+    btnConfirm.addEventListener('click', async () => {
+      const id = btnConfirm.dataset.photoId;
+      btnConfirm.disabled = true;
+
+      try {
+        const resp = await fetch(`/galeria/fotos/${id}`, { method: 'DELETE', headers: { 'X-Requested-With':'fetch' } });
+        const data = await resp.json().catch(() => ({}));
+
+        if (resp.ok && data.ok) {
+          // Cerrar modales
+          confirmModal.hide();
+          photoModal.hide();
+
+          // Quitar la tarjeta de la grilla
+          const thumb = document.querySelector(`img.js-photo[data-id="${id}"]`);
+          if (thumb) {
+            const col = thumb.closest('.col');
+            if (col) col.remove();
+          }
+
+          // Si ya no quedan fotos, muestra alerta vacía (opcional)
+          if (!document.querySelector('.js-photo')) {
+            const container = document.querySelector('.container');
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-info mt-3';
+            alert.textContent = 'No hay fotos porque todavía no has guardado ninguna.';
+            container.querySelector('h1').insertAdjacentElement('afterend', alert);
+          }
+        } else {
+          deleteError.classList.remove('d-none');
+          deleteError.textContent = data?.error === 'not_found'
+            ? 'La foto no existe o no te pertenece.'
+            : 'No se pudo eliminar. Intenta de nuevo.';
+        }
+      } catch (e) {
+        deleteError.classList.remove('d-none');
+        deleteError.textContent = 'Error de red. Intenta de nuevo.';
+      } finally {
+        btnConfirm.disabled = false;
+      }
+    });
+
+    /* ================================
+     *  Agregar foto a un álbum (combo)
+     * ================================ */
+    const addModalEl       = document.getElementById('addToAlbumModal');
+    const addModal         = addModalEl ? new bootstrap.Modal(addModalEl) : null;
+    const addForm          = document.getElementById('addToAlbumForm');
+    const albumSelect      = document.getElementById('albumSelect');
+    const addErr           = document.getElementById('addToAlbumError');
+    const btnConfirmAdd    = document.getElementById('btnConfirmAdd');
+
+    let addPhotoId = null;
+
+    async function loadAlbumsIntoSelect() {
+  albumSelect.innerHTML = '<option value="">Selecciona un álbum…</option>';
+  addErr.classList.add('d-none');
+  addErr.textContent = '';
+
+  try {
+    const r = await fetch('/galeria/albums/json');
+    const data = await r.json();
+    if (!r.ok || !data.ok) throw 0;
+
+    if (!data.albums.length) {
+      albumSelect.innerHTML = '<option value="">No tienes álbumes</option>';
+      return;
+    }
+    data.albums.forEach(a => {
+      const opt = document.createElement('option');
+      opt.value = a.id;
+      opt.textContent = a.name;
+      albumSelect.appendChild(opt);
+    });
+  } catch {
+    addErr.textContent = 'No se pudieron cargar tus álbumes.';
+    addErr.classList.remove('d-none');
+  }
+}
+
+    // Click en “Agregar al álbum” (solo en fotos sueltas)
+    if (btnAddToAlbum && addModal) {
+      btnAddToAlbum.addEventListener('click', async () => {
+        // usa el id que guardaste en el botón eliminar
+        addPhotoId = btnDelete.dataset.photoId || null;
+        await loadAlbumsIntoSelect();
+        addModal.show();
+      });
+    }
+
+    // Enviar: asignar foto → álbum
+    if (addForm) {
+      addForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!addPhotoId) return;
+        const albumId = albumSelect ? albumSelect.value : '';
+        if (!albumId) { if (albumSelect) albumSelect.focus(); return; }
+
+        if (btnConfirmAdd) btnConfirmAdd.disabled = true;
+        if (addErr) { addErr.classList.add('d-none'); addErr.textContent = ''; }
+
+        try {
+          const resp = await fetch(`/galeria/fotos/${addPhotoId}/album`, {
+            method: 'POST',
+            headers: { 'Content-Type':'application/json' },
+            body: JSON.stringify({ albumId })
+          });
+          const data = await resp.json().catch(() => ({}));
+
+          if (resp.ok && data.ok) {
+            if (addModal) addModal.hide();
+          } else {
+            if (addErr) {
+              addErr.textContent = data?.error === 'album_not_found'
+                ? 'Álbum no encontrado.'
+                : 'No se pudo agregar la foto.';
+              addErr.classList.remove('d-none');
+            }
+          }
+        } catch {
+          if (addErr) {
+            addErr.textContent = 'Error de red. Intenta de nuevo.';
+            addErr.classList.remove('d-none');
+          }
+        } finally {
+          if (btnConfirmAdd) btnConfirmAdd.disabled = false;
+        }
+      });
+    }
+
+    const albumButtons = document.querySelectorAll('.js-album-open');
+    const albumThumbs  = document.getElementById('albumThumbs'); // puede ser null si no lo añadiste
+
+    let albumPhotos = [];   // [{id, title}]
+    let albumIndex  = -1;
+    let albumName   = '';
+
+    function clearAlbumState() {
+      albumPhotos = [];
+      albumIndex  = -1;
+      albumName   = '';
+      if (albumThumbs) albumThumbs.innerHTML = '';
+    }
+
+    function highlightActiveThumb() {
+      if (!albumThumbs) return;
+      albumThumbs.querySelectorAll('.album-thumb').forEach((t, i) => {
+        t.classList.toggle('border', i === albumIndex);
+        t.classList.toggle('border-2', i === albumIndex);
+        t.classList.toggle('border-primary', i === albumIndex);
+      });
+    }
+
+    function showAlbumPhoto(i) {
+      if (!albumPhotos.length) return;
+      if (i < 0 || i >= albumPhotos.length) return;
+
+      albumIndex = i;
+      const p   = albumPhotos[i];
+      const src = `/galeria/media/${p.id}`;
+
+      imgEl.src = src;
+      imgEl.alt = p.title || 'Imagen';
+      titleEl.textContent = `Álbum: ${albumName} — ${p.title || 'Imagen'} (${i+1}/${albumPhotos.length})`;
+
+      btnDelete.dataset.photoId  = p.id;
+      btnDelete.dataset.thumbSrc = src;
+      btnDelete.dataset.title    = p.title || 'Imagen';
+
+      // cuando vienes desde álbum, oculta “Agregar al álbum”
+      if (btnAddToAlbum) btnAddToAlbum.classList.add('d-none');
+
+      highlightActiveThumb();
+      photoModal.show();
+    }
+
+    function renderAlbumThumbs(list) {
+      if (!albumThumbs) return;
+      albumThumbs.innerHTML = list.map((p, i) => `
+        <img src="/galeria/media/${p.id}"
+            class="img-thumbnail album-thumb"
+            data-idx="${i}"
+            style="width:72px;height:72px;object-fit:cover;cursor:pointer">
+      `).join('');
+    }
+
+    if (albumThumbs) {
+      albumThumbs.addEventListener('click', (e) => {
+        const t = e.target.closest('.album-thumb');
+        if (!t) return;
+        const i = parseInt(t.dataset.idx, 10);
+        showAlbumPhoto(i);
+      });
+    }
+
+    function handleKey(e) {
+      if (!albumPhotos.length) return;
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        const next = (albumIndex + 1) % albumPhotos.length;
+        showAlbumPhoto(next);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const prev = (albumIndex - 1 + albumPhotos.length) % albumPhotos.length;
+        showAlbumPhoto(prev);
+      }
+    }
+    modalEl.addEventListener('shown.bs.modal', () => document.addEventListener('keydown', handleKey));
+    modalEl.addEventListener('hidden.bs.modal', () => {
+      document.removeEventListener('keydown', handleKey);
+      clearAlbumState();
+      fromAlbum = false;
+      if (btnAddToAlbum) btnAddToAlbum.classList.remove('d-none'); // al cerrar, vuelve al estado por defecto (visible)
+    });
+
+    // Botón "Ver" del álbum → botón Agregar oculto
+    albumButtons.forEach(btn => {
+      btn.addEventListener('click', async () => {
+        fromAlbum = true;
+        if (btnAddToAlbum) btnAddToAlbum.classList.add('d-none'); // 👈 oculta “Agregar al álbum” en álbum
+
+        const id = btn.dataset.albumId;
+        albumName = btn.dataset.albumName || 'Álbum';
+
+        try {
+          const resp = await fetch(`/galeria/albums/${id}/json`);
+          if (!resp.ok) throw new Error('load');
+          const data = await resp.json();
+
+          if (!data.photos || !data.photos.length) {
+            clearAlbumState();
+            alert('Este álbum no tiene fotos.');
+            return;
+          }
+
+          albumPhotos = data.photos;
+          renderAlbumThumbs(albumPhotos);
+          showAlbumPhoto(0);
+        } catch (e) {
+          clearAlbumState();
+          alert('No se pudo cargar el álbum.');
+        }
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>

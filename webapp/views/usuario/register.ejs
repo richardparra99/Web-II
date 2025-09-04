@@ -1,0 +1,35 @@
+<%- include('../components/header.ejs') %>
+    <div class="container">
+        <div class="row mt-4 mb-4">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h1>Registro</h1>
+                        </div>
+                        <form action="" method="POST">
+
+                            <%- include('../components/error.ejs') %>
+
+                                <div class="mb-2">
+                                    <label class="form-label" for="email">Email:</label>
+                                    <input class="form-control" type="email" id="email" name="email" required />
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label" for="password">Contraseña:</label>
+                                    <input class="form-control" type="password" id="password" name="password"
+                                        required />
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label" for="nombreCompleto">Nombre Completo:</label>
+                                    <input class="form-control" type="text" id="nombreCompleto" name="nombreCompleto"
+                                        required />
+                                </div>
+                                <button class="btn btn-warning" type="submit" style="color: white;">Registrarse</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('../components/footer.ejs') %>

@@ -1,0 +1,66 @@
+<%- include('../components/header.ejs') %>
+    <div class="container">
+        <div class="row mt-4 mb-4">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h1>Lista de Materias</h1>
+                        </div>
+                        <% if (materiaArr.length==0) { %>
+                            <p>No hay materias registradas.</p>
+                            <% } else { %>
+
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nombre</th>
+                                            <th>Descripcion</th>
+                                            <th>Creditos</th>
+                                            <th>Docente</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% materiaArr.forEach(materia=> { %>
+                                            <tr>
+                                                <td>
+                                                    <%= materia.id %>
+                                                </td>
+                                                <td>
+                                                    <%= materia.nombre %>
+                                                </td>
+                                                <td>
+                                                    <%= materia.descripcion %>
+                                                </td>
+                                                <td>
+                                                    <%= materia.creditos %>
+                                                </td>
+                                                <td>
+                                                    <%= materia.docente.nombre %>
+                                                        <%= materia.docente.apellido %>
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-primary"
+                                                        href="/materias/<%= materia.id %>">Editar</a>
+                                                </td>
+                                                <td>
+                                                    <form
+                                                        onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta materia?');"
+                                                        method="POST" action="/materias/<%= materia.id %>/delete">
+                                                        <button class="btn btn-danger" type="submit">Eliminar</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                    </tbody>
+                                </table>
+                                <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('../components/footer.ejs') %>
