@@ -37,34 +37,34 @@ exports.obtenerSoloAlbumes = async (req, res) => {
 
 exports.mostrarFormularioSubida = (req, res) => {
   if (!req.currentUser) return res.redirect("/login");
-  res.render("galeria/upload"); // Asegúrate de tener views/galeria/upload.ejs
+  res.render("galeria/upload"); 
 };
 
 
-exports.subirImagenes = async (req, res) => {
-  if (!req.currentUser) return res.redirect("/login");
+// exports.subirImagenes = async (req, res) => {
+//   if (!req.currentUser) return res.redirect("/login");
 
-  const usuarioId = req.currentUser.id;
-  const archivos = req.files || [];
-  const albumId = req.body.albumId || null;
-  const titulo   = req.body.title || null;  // si luego agregas un input "title"
+//   const usuarioId = req.currentUser.id;
+//   const archivos = req.files || [];
+//   const albumId = req.body.albumId || null;
+//   const titulo   = req.body.title || null;  // si luego agregas un input "title"
 
-  await Promise.all(
-    archivos.map((f) =>
-      db.foto.create({
-        userId: usuarioId,
-        albumId,
-        filename: f.filename,
-        OriginalName: f.originalname, // tu modelo usa "OriginalName"
-        mimeType: f.mimetype,
-        tamano: f.size,               // tu modelo usa "tamano"
-        titulo: titulo
-      })
-    )
-  );
+//   await Promise.all(
+//     archivos.map((f) =>
+//       db.foto.create({
+//         userId: usuarioId,
+//         albumId,
+//         filename: f.filename,
+//         OriginalName: f.originalname, // tu modelo usa "OriginalName"
+//         mimeType: f.mimetype,
+//         tamano: f.size,               // tu modelo usa "tamano"
+//         titulo: titulo
+//       })
+//     )
+//   );
 
-  res.redirect("/galeria"); // vuelve al inicio de la galería
-};
+//   res.redirect("/galeria"); // vuelve al inicio de la galería
+// };
 
 exports.subirImagenes = async (req, res) => {
   try {
@@ -77,7 +77,6 @@ exports.subirImagenes = async (req, res) => {
     const usuarioId = req.currentUser.id;
     const files = Array.isArray(req.files.photos) ? req.files.photos : [req.files.photos];
 
-    // ✅ SOLO aquí: public/uploads
     const userDir = path.join(__dirname, '..', 'public', 'uploads', String(usuarioId));
     fs.mkdirSync(userDir, { recursive: true });
 
@@ -88,7 +87,7 @@ exports.subirImagenes = async (req, res) => {
       const ext = path.extname(file.name);
       const unique = `${Date.now()}-${Math.round(Math.random()*1e9)}${ext}`;
 
-      await file.mv(path.join(userDir, unique));   // <-- EXPRESS-FILEUPLOAD
+      await file.mv(path.join(userDir, unique));
 
       await db.foto.create({
         userId: usuarioId,
@@ -114,7 +113,7 @@ exports.subirImagenes = async (req, res) => {
   }
 };
 
-// Servir protegido desde public/uploads
+
 exports.servirFoto = async (req, res) => {
   if (!req.currentUser) return res.redirect('/login');
   const usuarioId = req.currentUser.id;
@@ -219,7 +218,6 @@ exports.albumsCreate = async (req, res) => {
   }
 };
 
-// Devuelve datos del álbum + sus fotos (JSON) para el modal
 exports.albumsJson = async (req, res) => {
   try {
     const userId  = req.currentUser.id;
@@ -302,7 +300,6 @@ exports.subirImagenesAAlbum = async (req, res) => {
   }
 };
 
-// POST /galeria/fotos/:id/album  { albumId }
 exports.setPhotoAlbum = async (req, res) => {
   try {
     const userId = req.currentUser.id;
@@ -313,7 +310,6 @@ exports.setPhotoAlbum = async (req, res) => {
       return res.status(400).json({ ok: false, error: 'bad_photo_id' });
     }
 
-    // albumId puede venir string; normalizamos. Si no viene => quitar del álbum
     let { albumId } = req.body || {};
     if (albumId === '' || albumId === undefined) albumId = null;
     if (albumId !== null) {
@@ -323,15 +319,12 @@ exports.setPhotoAlbum = async (req, res) => {
       }
     }
 
-    // Usa el nombre de modelo que tengas exportado
     const Foto  = (db.foto  || db.Foto);
     const Album = (db.album || db.Album);
 
-    // Verifica que la foto sea del usuario
     const photo = await Foto.findOne({ where: { id: photoId, userId } });
     if (!photo) return res.status(404).json({ ok: false, error: 'not_found' });
 
-    // Si albumId es null => quitar la foto del álbum
     if (albumId === null) {
       await photo.update({ albumId: null });
       return res.json({ ok: true });

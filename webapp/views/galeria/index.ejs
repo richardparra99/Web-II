@@ -8,7 +8,6 @@
   <%- include('../components/header') %>
 
   <div class="container py-4">
-    <!-- FOTOS -->
     <h1 class="h3 mb-3">Mis fotos</h1>
 
     <% if (!photos || photos.length === 0) { %>
@@ -16,7 +15,6 @@
         No hay fotos porque todavía no has guardado ninguna.
       </div>
     <% } else { %>
-      <!-- Grilla responsiva -->
       <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
         <% photos.forEach((p, idx) => { %>
           <div class="col">
@@ -78,7 +76,6 @@
   </div>
 <% } %>
 
-  <!-- MODAL + CAROUSEL -->
   <div class="modal fade" id="photoModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" style="--bs-modal-width: 320px;">
     <div class="modal-content">
@@ -88,11 +85,9 @@
       </div>
       <div class="modal-body">
         <img id="photoImg" src="" class="img-fluid rounded" alt="">
-  <!-- nuevo: tira de miniaturas cuando vienes desde un álbum -->
   <div id="albumThumbs" class="d-flex flex-wrap gap-2 mt-3"></div>
       </div>
       <div class="modal-footer">
-        <!-- El botón dice “Eliminar” y por ahora NO hace nada -->
          <button type="button" class="btn btn-info" style="color: white;" id="btnAddToAlbum" 
          data-photo-id="">Agregar al album</button>
         <button type="button" class="btn btn-danger" id="btnDelete" data-photo-id="">Eliminar</button>
@@ -123,7 +118,6 @@
   </div>
 </div>
 
-<!-- MODAL: Ver álbum -->
 <div class="modal fade" id="albumModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
@@ -133,14 +127,13 @@
       </div>
       <div class="modal-body">
         <div id="albumGallery" class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
-          <!-- aquí se renderizan las fotos del álbum -->
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL: Agregar al álbum -->
+
 <div class="modal fade" id="addToAlbumModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" style="--bs-modal-width:380px;">
     <div class="modal-content">
@@ -170,7 +163,6 @@
   <%- include('../components/footer') %>
 
   <script>
-  // Abre el modal en el slide correspondiente al thumbnail clickeado
   (function () {
     const modalEl   = document.getElementById('photoModal');
     const modal     = new bootstrap.Modal(modalEl);
@@ -179,7 +171,7 @@
     const btnDelete = document.getElementById('btnDelete');
     const btnAddToAlbum = document.getElementById('btnAddToAlbum');
 
-    // >>> agregado: refs para el modal de confirmación
+
     const confirmModalEl = document.getElementById('confirmDeleteModal');
     const confirmModal   = new bootstrap.Modal(confirmModalEl);
     const confirmImg     = document.getElementById('confirmThumb');
@@ -187,10 +179,9 @@
     const btnConfirm     = document.getElementById('btnConfirmDelete');
     const deleteError    = document.getElementById('deleteError');
 
-    // >>> agregado: alias para que photoModal.hide() funcione sin cambiar tu código
     const photoModal = modal;
 
-    // >>> agregado: estado de contexto (si vienes desde álbum)
+
     let fromAlbum = false;
 
     document.querySelectorAll('.js-photo').forEach(th => {
@@ -203,12 +194,10 @@
         imgEl.alt = title;
         titleEl.textContent = title;
 
-        // >>> agregado: guarda datos para usar en confirmación
         btnDelete.dataset.photoId  = id;
         btnDelete.dataset.thumbSrc = src;
         btnDelete.dataset.title    = title;
 
-        // si vienes de “Mis fotos”, muestra “Agregar al álbum”
         if (btnAddToAlbum) btnAddToAlbum.classList.remove('d-none');
         fromAlbum = false;
 
@@ -216,26 +205,22 @@
       });
     });
 
-    // Por ahora, “Eliminar” NO hace nada; solo mostramos por consola.
     btnDelete.addEventListener('click', () => {
       const id    = btnDelete.dataset.photoId;
       const src   = btnDelete.dataset.thumbSrc;
       const title = btnDelete.dataset.title;
 
-      // pinta datos en modal de confirmación
       confirmImg.src = src;
       confirmImg.alt = title;
       confirmName.textContent = title;
       btnConfirm.dataset.photoId = id;
 
-      // limpia mensaje de error
       deleteError.classList.add('d-none');
       deleteError.textContent = 'No se pudo eliminar. Intenta de nuevo.';
 
       confirmModal.show();
     });
 
-    // Confirmar eliminación → fetch DELETE
     btnConfirm.addEventListener('click', async () => {
       const id = btnConfirm.dataset.photoId;
       btnConfirm.disabled = true;

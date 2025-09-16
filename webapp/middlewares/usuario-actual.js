@@ -1,8 +1,7 @@
 const db = require("../models");
-
+// para identificar para quien este logueado solo para ese usuario se subira la fotos
 module.exports = async (req, res, next) => {
   try {
-    // Si NO hay sesión o el email no es un string no vacío, no consultes a la BD
     if (!req.session || typeof req.session.userEmail !== "string" || !req.session.userEmail.trim()) {
       req.currentUser = null;
       res.locals.currentUser = null;

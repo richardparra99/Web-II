@@ -18,17 +18,17 @@
         </div>
       <% } %>
 
-      <!-- Formulario para crear álbum -->
+
       <div class="card mb-3 shadow-sm">
         <div class="card-body">
           <form action="/galeria/albums" method="post" class="row g-2 align-items-end">
             <div class="col-12 col-md-4">
               <label class="form-label">Nombre del álbum</label>
-              <input name="name" class="form-control" required placeholder="Ej: Vacaciones 2025">
+              <input name="name" class="form-control" required placeholder="Nombre">
             </div>
             <div class="col-12 col-md-6">
               <label class="form-label">Descripción (opcional)</label>
-              <input name="description" class="form-control" placeholder="Breve descripción">
+              <input name="description" class="form-control" placeholder="Descripción">
             </div>
             <div class="col-12 col-md-2">
               <button class="btn btn-info w-100" style="color: white;">Crear</button>
@@ -91,14 +91,13 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
           </div>
           <div class="modal-body">
-            <!-- Galería del álbum -->
+
             <div id="albumGallery" class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
-              <!-- Thumbs aquí -->
+
             </div>
 
             <hr class="my-3">
 
-            <!-- Subida a álbum -->
             <form id="albumUploadForm" class="d-flex gap-2 align-items-center">
               <input id="albumPhotosInput" type="file" class="form-control" name="photos" accept="image/*" multiple>
               <button id="albumUploadBtn" type="submit" class="btn btn-success">Agregar</button>
@@ -167,7 +166,6 @@
           });
         });
 
-        // Subir fotos al álbum
         albumUploadForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (!currentAlbumId) return;
@@ -188,19 +186,15 @@
             const data = await resp.json().catch(() => ({}));
 
             if (resp.ok && data.ok) {
-            // Recarga la lista del álbum (grilla del modal)
             const r2 = await fetch(`/galeria/albums/${currentAlbumId}/json`);
             const d2 = await r2.json();
             renderGallery(d2.photos || []);
             albumPhotosInput.value = '';
 
-            // === NUEVO: actualizar portada de la tarjeta del álbum ===
-            // 1) intenta usar la última creada que devolvió el POST
             const lastFromUpload = Array.isArray(data.created) && data.created.length
                 ? data.created[data.created.length - 1].id
                 : null;
 
-            // 2) si no vino en el POST, usa la más reciente del JSON (orden DESC)
             const latestId = lastFromUpload || (d2.photos && d2.photos.length ? d2.photos[0].id : null);
 
             if (latestId) {
