@@ -5,6 +5,9 @@ const materia = require("./materia")(sequelize);
 const usuario = require("./usuario")(sequelize);
 const album = require("./album")(sequelize);
 const foto = require("./foto")(sequelize);
+const genero = require("./genero")(sequelize);
+const artista = require("./artista")(sequelize);
+const artistaGenero = require("./artista_genero")(sequelize);
 
 persona.hasMany(materia, { foreignKey: "idDocente", as: "materias" });
 materia.belongsTo(persona, { foreignKey: "idDocente", as: "docente" });
@@ -19,6 +22,9 @@ album.belongsTo(usuario, {foreignKey: "userId", as: "user"});
 album.hasMany(foto, {foreignKey: "albumId", as: "fotos"});
 foto.belongsTo(album, {foreignKey: "albumId", as: "album"});
 
+artista.belongsToMany(genero, {through: artistaGenero, as: "generos", foreignKey: "artistaId" });
+genero.belongsToMany(artista, {through: artistaGenero, as: "artistas", foreignKey: "generoId" });
+
 
 module.exports = {
     persona,
@@ -26,6 +32,9 @@ module.exports = {
     usuario,
     foto,
     album,
+    genero,
+    artista,
+    artistaGenero,
     sequelize,
     Sequelize: sequelize.Sequelize
 }
