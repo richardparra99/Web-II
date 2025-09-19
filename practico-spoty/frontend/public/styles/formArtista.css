@@ -1,0 +1,56 @@
+:root {
+    --color-azul: #196eb4;
+    --color-azul-hover: #033157;
+    --color-blanco: #FFFFFF;
+    --color-oscuro: #363636;
+    --color-oscuro-hover: #070707;
+    --tiempo-animacion:300ms;
+    --verde-opaco: #BAD89A;
+    --verde-hover: #62773E;
+}
+
+form {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.caja_formulario{
+    display: grid;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+input {
+    width: 300px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 8px 15px 8px 15px;
+    border-radius: 5px;
+    border: 1px solid gray;
+}
+
+button {
+    border: 0px;
+    border-radius: 5px;
+    margin-top: 10px;
+    padding: 10px 5px 10px 5px;
+    background-color: var(--verde-opaco);
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+}
+
+
+.btninicio {
+    background: #161a22;
+    color: #e6e9ef;
+    margin-top: 12px;
+    text-decoration: none;
+    padding: 10px 15px 10px 15px;
+    border-radius: 5px;
+}
+
+.imagen_logo {
+  margin-top: 12px;
+  width: 50px;
+  height: 50px;
+}

@@ -1,11 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Practico Spotify</title>
-</head>
-<body>
-    Hola esto sera el practico
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Practico Spotify</title>
+        <link rel="stylesheet" href="styles/style.css">
+        <link rel="stylesheet" href="styles/cuerpoEncabezado.css">
+    </head>
+    <body>
+        <header class="header-titulo">
+            <img class="imagen_logo" src="img/logo-spotify.png" alt="logo">
+            <h1>Spotify</h1>
+            <div class="acciones-header">
+                <!-- Dropdown Géneros -->
+                <div class="dropdown">
+                </div>
+
+                <!-- Dropdown Artistas -->
+                <div class="dropdown">
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <h2 style="margin:0 0 12px 0">Géneros</h2>
+            <div id="genresGrid" class="grid"></div>
+            <div id="genresEmpty" class="empty" style="display:none">Sin géneros por ahora.</div>
+        </main>
+        <script src="js/index.js"></script>
+        <script src="js/menuHeader.js"></script>
+    </body>
 </html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="styles/cuerpoEncabezado.css">
+        <link rel="stylesheet" href="styles/formArtista.css">
+        <link rel="stylesheet" href="styles/style.css">
+        <title>Formulario de artista</title>
+    </head>
+    <body>
+        <header class="header-titulo">
+            <img class="imagen_logo" src="img/logo-spotify.png" alt="logo">
+            <h1>Spotify</h1>
+            <div class="acciones-header">
+            <!-- Menú Géneros -->
+            <div class="dropdown">
+                
+            </div>
+            <!-- Menú Artistas -->
+            <div class="dropdown">
+                
+            </div>
+            </div>
+        </header>
+        <main>
+            <form id="frmArtista">
+                <div class="caja_formulario">
+                    <h2>Formulario de Artista</h2>
+                    <label for="nombre">Nombre del artista:</label>
+                    <input id="nombre" name="nombre" type="text" minlength="1" maxlength="100" required />
+
+                    <label for="imagen">URL de imagen:</label>
+                    <input id="imagen" name="imagen" type="url" placeholder="https://..." />
+
+                    <div id="previewBox">
+                    <img id="previewImg" alt="Vista previa">
+                    </div>
+
+                    <label for="generoId">Género:</label>
+                    <select id="generoId" name="generoId" required
+                            style="width:100%;padding:8px;border-radius:8px;border:1px solid #2a3140;background:#161a22;color:#e6e9ef;">
+                    <option value="">Selecciona un género</option>
+                    </select>
+
+                    <button class="btnGuardar" type="submit">Guardar</button>
+                </div>
+            </form>
+        </main>
+        <script src="js/formArtista.js"></script>
+        <script src="js/menuHeader.js"></script>
+    </body>
+</html>
