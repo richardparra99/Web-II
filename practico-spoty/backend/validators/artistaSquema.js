@@ -6,7 +6,7 @@ const artistaSquema = Joi.object({
 });
 
 const artistaOptionalSquema = Joi.object({
-    nombre: Joi.string().min().max(100).optional(),
+    nombre: Joi.string().min(1).max(100).optional(),
     imagen: Joi.string().uri().optional()
 });
 

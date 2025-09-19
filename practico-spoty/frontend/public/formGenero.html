@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Formulario de genero</title>
+        <link rel="stylesheet" href="styles/cuerpoEncabezado.css">
+        <link rel="stylesheet" href="styles/style.css">
+        <link rel="stylesheet" href="styles/formGenero.css">
+    </head>
+    <body>
+        <header class="header-titulo">
+            <img class="imagen_logo" src="img/logo-spotify.png" alt="logo">
+            <h1>Spotify</h1>
+        </header>
+        <main>
+            <h2>Formulario de genero</h2>
+            <form id="frmGenero">
+                <div class="caja_formulario">
+                    <label for="nombre">Nombre del género:</label>
+                    <input id="nombre" name="nombre" type="text" minlength="1" maxlength="100"/>
+
+                    <label for="imagen">URL de imagen:</label>
+                    <input id="imagen" name="imagen" type="url" placeholder="https://..." />
+
+                    <div id="previewBox" style="margin-top:10px; display:none;">
+                        <img id="previewImg" alt="Vista previa" style="max-width:260px; border-radius:8px; border:1px solid #ddd;">
+                    </div>
+
+                    <button class="btnGuardar" type="submit">Guardar</button>
+                    <div id="msg" class="msg"></div>
+                </div>
+            </form>
+        </main>
+        <script src="js/formGenero.js"></script>
+        <script src="js/menuHeader.js"></script>
+    </body>
+</html>
