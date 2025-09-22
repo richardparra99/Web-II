@@ -15,17 +15,18 @@
         </header>
         <main>
             <h2>Formulario de genero</h2>
-            <form id="frmGenero">
+            <form id="frmGenero" enctype="multipart/form-data">
                 <div class="caja_formulario">
                     <label for="nombre">Nombre del género:</label>
                     <input id="nombre" name="nombre" type="text" minlength="1" maxlength="100"/>
 
-                    <label for="imagen">URL de imagen:</label>
-                    <input id="imagen" name="imagen" type="url" placeholder="https://..." />
+                    <label for="imagen">Ingrese imagen:</label>
+                    <input type="file" name="imagen" accept="image/*">
 
                     <div id="previewBox" style="margin-top:10px; display:none;">
-                        <img id="previewImg" alt="Vista previa" style="max-width:260px; border-radius:8px; border:1px solid #ddd;">
+                        <img id="previewImg" alt="Vista previa" style="max-width:260px; border-radius:8px; border:1px solid #2a3140;">
                     </div>
+
 
                     <button class="btnGuardar" type="submit">Guardar</button>
                     <div id="msg" class="msg"></div>

@@ -62,4 +62,11 @@
       ['Nuevo artista', 'formArtista.html'],
     ])
   );
+
+  actions.appendChild(
+    makeDropdown('Álbumes', [
+      ['Ver álbumes', 'albums.html'],
+      ['Nuevo álbum', 'formAlbum.html'],
+    ])
+  );
 })();

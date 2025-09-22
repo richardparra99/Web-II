@@ -2,12 +2,12 @@ const Joi = require("joi");
 
 const artistaSquema = Joi.object({
     nombre: Joi.string().min(1).max(100).required(),
-    imagen: Joi.string().uri().optional()
+    imagen: Joi.string().allow("", null).optional()
 });
 
 const artistaOptionalSquema = Joi.object({
     nombre: Joi.string().min(1).max(100).optional(),
-    imagen: Joi.string().uri().optional()
+    imagen: Joi.string().allow("", null).optional()
 });
 
 const artistaGeneroSquema = Joi.object({
