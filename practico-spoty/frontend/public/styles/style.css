@@ -1,3 +1,16 @@
+:root {
+    --color-azul: #196eb4;
+    --color-azul-hover: #033157;
+    --color-blanco: #FFFFFF;
+    --color-oscuro: #363636;
+    --color-oscuro-hover: #070707;
+    --tiempo-animacion:300ms;
+    --verde-opaco: #BAD89A;
+    --verde-hover: #62773E;
+    --rojo-claro: #ff4040;
+    --rojo-oscuro-hover: #e00000;
+}
+
 .header-titulo {
   display: flex;
   background-color: #1ED760;
@@ -124,4 +137,38 @@ main{
   margin-top: 12px;
   width: 50px;
   height: 50px;
+}
+
+.btn-edit-genero {
+  background-color: var(--color-oscuro);
+  color: #e6e9ef;
+  margin-top: 2px;
+  text-decoration: none;
+  padding: 10px 15px 10px 15px;
+  border-radius: 5px;
+  border: 0px;
+  cursor: pointer;
+}
+
+.btn-edit-genero:hover {
+  background-color: var(--color-oscuro-hover);
+}
+
+.btn-edit-genero, .btn-del-genero{
+  transition: var(--tiempo-animacion);
+}
+
+.btn-del-genero {
+  background: var(--rojo-claro);
+  color: #e6e9ef;
+  margin-top: 2px;
+  text-decoration: none;
+  padding: 10px 15px 10px 15px;
+  border-radius: 5px;
+  border: 0px;
+  cursor: pointer;
+}
+
+.btn-del-genero:hover {
+  background-color: var(--rojo-oscuro-hover);
 }

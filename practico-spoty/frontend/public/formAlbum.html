@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="styles/cuerpoEncabezado.css">
+        <link rel="stylesheet" href="styles/style.css">
+        <link rel="stylesheet" href="styles/formAlbum.css">
+        <title>Formulario Album</title>
+    </head>
+    <body>
+        <header class="header-titulo">
+            <img class="imagen_logo" src="img/logo-spotify.png" alt="logo">
+            <h1>Spotify</h1>
+            <div class="acciones-header">
+            <!-- Menú Géneros -->
+                <div class="dropdown">
+                    
+                </div>
+                <!-- Menú Artistas -->
+                <div class="dropdown">
+                    
+                </div>
+            </div>
+        </header>
+        <main>
+            <form id="frmAlbum" enctype="multipart/form-data" class="caja_formulario">
+            <h2>Formulario de Álbum</h2>
+
+            <label for="nombre">Nombre del Álbum:</label>
+            <input id="nombre" name="nombre" type="text" minlength="1" maxlength="100" required />
+
+            <label for="imagen">Imagen del Álbum:</label>
+            <input id="imagen" name="imagen" type="file" accept="image/*" />
+
+            <div id="previewBox" style="margin-top:10px; display:none;">
+                <img id="previewImg" alt="Vista previa"
+                    style="max-width:260px; border-radius:8px; border:1px solid #ddd;">
+            </div>
+
+            <label for="artistaId">Artista:</label>
+            <select id="artistaId" name="artistaId" required>
+                <option value="">Selecciona un artista</option>
+            </select>
+
+            <button class="btnGuardar" type="submit">Guardar</button>
+            <div id="msg" class="msg"></div>
+            </form>
+        </main>
+
+        <script src="js/formAlbum.js"></script>
+        <script src="js/menuHeader.js"></script>
+    </body>
+</html>

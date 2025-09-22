@@ -14,13 +14,13 @@
             <h1>Spotify</h1>
             <div class="acciones-header">
             <!-- Menú Géneros -->
-            <div class="dropdown">
-                
-            </div>
-            <!-- Menú Artistas -->
-            <div class="dropdown">
-                
-            </div>
+                <div class="dropdown">
+                    
+                </div>
+                <!-- Menú Artistas -->
+                <div class="dropdown">
+                    
+                </div>
             </div>
         </header>
         <main>
@@ -30,17 +30,18 @@
                     <label for="nombre">Nombre del artista:</label>
                     <input id="nombre" name="nombre" type="text" minlength="1" maxlength="100" required />
 
-                    <label for="imagen">URL de imagen:</label>
-                    <input id="imagen" name="imagen" type="url" placeholder="https://..." />
+                    <label for="imagen">Imagen (archivo):</label>
+                    <input id="imagen" name="imagen" type="file" accept="image/*" />
 
-                    <div id="previewBox">
-                    <img id="previewImg" alt="Vista previa">
+                    <!-- Vista previa (se mantiene) -->
+                    <div id="previewBox" style="display:none;">
+                        <img id="previewImg" alt="Vista previa" style="max-width:260px;border-radius:8px;border:1px solid #2a3140;">
                     </div>
 
+
                     <label for="generoId">Género:</label>
-                    <select id="generoId" name="generoId" required
-                            style="width:100%;padding:8px;border-radius:8px;border:1px solid #2a3140;background:#161a22;color:#e6e9ef;">
-                    <option value="">Selecciona un género</option>
+                    <select id="generoId" name="generoId" required>
+                        <option value="">Selecciona un género</option>
                     </select>
 
                     <button class="btnGuardar" type="submit">Guardar</button>
