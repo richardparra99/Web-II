@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="styles/cuerpoEncabezado.css">
+        <link rel="stylesheet" href="styles/style.css">
+        <link rel="stylesheet" href="styles/formCancion.css">
+        <title>formulario de cancion</title>
+    </head>
+    <body>
+        <header class="header-titulo">
+            <img class="imagen_logo" src="img/logo-spotify.png" alt="logo">
+            <h1>Spotify</h1>
+            <div class="acciones-header"><!-- se llena por JS --></div>
+        </header>
+        <main>
+            <form id="frmCancion" enctype="multipart/form-data">
+                <div class="caja_formulario">
+                <h2>formulario de canciones</h2>
+
+                <label for="nombre">Nombre de la canción:</label>
+                <input id="nombre" name="nombre" type="text" required minlength="1" maxlength="150" />
+
+                <label for="albumId">Álbum:</label>
+                <select id="albumId" name="albumId" required>
+                    <option value="">Selecciona un álbum</option>
+                </select>
+
+                <label for="archivo">Archivo MP3:</label>
+                <input id="archivo" name="archivo" type="file" accept="audio/mpeg" required />
+
+                <div id="previewBox" style="margin-top:12px; display:none;">
+                    <audio id="previewAudio" controls style="width:100%"></audio>
+                </div>
+
+                <button class="btnGuardar" type="submit">Guardar</button>
+                </div>
+            </form>
+        </main>
+
+        <script src="js/menuHeader.js"></script>
+        <script src="js/formCancion.js"></script>
+    </body>
+</html>

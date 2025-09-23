@@ -172,3 +172,7 @@ main{
 .btn-del-genero:hover {
   background-color: var(--rojo-oscuro-hover);
 }
+
+audio {
+    border-radius: 10px;
+}

@@ -1,4 +1,3 @@
-// public/js/headerMenu.js
 (() => {
   const header = document.querySelector('.header-titulo');
   if (!header) return;
@@ -12,7 +11,10 @@
   }
 
   // Detectar página actual
-  const isIndex = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname === '';
+  const isIndex =
+    window.location.pathname.endsWith('index.html') ||
+    window.location.pathname === '/' ||
+    window.location.pathname === '';
 
   // Botón Inicio (solo si NO estamos en index.html)
   if (!isIndex) {
@@ -51,7 +53,6 @@
   actions.appendChild(
     makeDropdown('Géneros', [
       ['Ver géneros', 'index.html'],
-      ['Nuevo género', 'formGenero.html'],
     ])
   );
 
@@ -63,10 +64,26 @@
     ])
   );
 
+  // Dropdown: Álbumes
   actions.appendChild(
     makeDropdown('Álbumes', [
       ['Ver álbumes', 'albums.html'],
       ['Nuevo álbum', 'formAlbum.html'],
+    ])
+  );
+
+  // Dropdown: Canciones
+  actions.appendChild(
+    makeDropdown('Canciones', [
+      ['Ver canciones', 'canciones.html'],
+      ['Nueva canción', 'formCancion.html'],
+    ])
+  );
+
+  // >>> NUEVO: Dropdown Admin (solo accesos de creación)
+  actions.appendChild(
+    makeDropdown('Admin', [
+      ['género', 'AdmGenero.html'],
     ])
   );
 })();

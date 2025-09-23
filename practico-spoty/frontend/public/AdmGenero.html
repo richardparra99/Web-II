@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="styles/cuerpoEncabezado.css">
+        <link rel="stylesheet" href="styles/style.css">
+        <link rel="stylesheet" href="styles/admGenero.css">
+        <title>Adm Genero</title>
+    </head>
+    <body>
+        <header class="header-titulo">
+            <img class="imagen_logo" src="img/logo-spotify.png" alt="logo">
+            <h1>Spotify</h1>
+            <div class="acciones-header"><!-- se llena por JS --></div>
+        </header>
+        <main>
+            <div class="toolbar">
+                <h2 style="margin:0">Administración de géneros</h2>
+                <a class="btn primary" href="formGenero.html">Nuevo género</a>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                    <th style="width:72px;">Imagen</th>
+                    <th>Nombre</th>
+                    <th style="width:220px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyGeneros">
+                    <!-- filas por JS -->
+                </tbody>
+            </table>
+
+            <div id="emptyMsg" class="empty" style="display:none">No hay géneros por ahora.</div>
+        </main>
+
+        <script src="js/admGenero.js"></script>
+        <script src="js/menuHeader.js"></script>
+    </body>
+</html>
