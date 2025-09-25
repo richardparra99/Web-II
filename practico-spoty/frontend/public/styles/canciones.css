@@ -9,15 +9,25 @@
     --verde-hover: #62773E;
     --rojo-claro: #ff4040;
     --rojo-oscuro-hover: #e00000;
+    --verde-focus: #1ED760;
 }
 
 .btninicio {
-    background: #161a22;
-    color: #e6e9ef;
+    background-color: var(--color-oscuro);
+    color: var(--color-blanco);
     margin-left: 50px;
     text-decoration: none;
     padding: 10px 15px 10px 15px;
     border-radius: 5px;
+}
+
+.btninicio:hover {
+    background-color: var(--color-oscuro-hover);
+}
+
+
+.btninicio {
+    transition: var(--tiempo-animacion);
 }
 
 .btn-edit {
@@ -56,4 +66,5 @@
 
 audio {
     border-radius: 10px;
+    background-color: var(--verde-focus);
 }

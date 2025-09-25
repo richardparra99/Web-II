@@ -1,4 +1,5 @@
 const db = require("../models");
+const { deleteUpload } = require("../utils/deleteUpload");
 
 exports.getAllGeneros = async (req, res) => {
   try {
@@ -15,7 +16,7 @@ exports.getGeneroById = async (req, res) => {
 
 exports.crearGenero = async (req, res) => {
   try {
-    const { nombre } = req.body;        // viene en multipart/form-data
+    const { nombre } = req.body;        
     const imagenPath = req.file ? `/uploads/${req.file.filename}` : null;
 
     if (!nombre || !String(nombre).trim()) {
@@ -35,7 +36,7 @@ exports.crearGenero = async (req, res) => {
 
 exports.actualizarGeneroPut = async (req, res) => {
   try {
-    const { nombre } = req.body;        // en multipart/form-data
+    const { nombre } = req.body;
     const genero = req.obj;
 
     if (!nombre || !String(nombre).trim()) {
@@ -89,6 +90,7 @@ exports.actualizarGeneroPatch = async (req, res) => {
 exports.eliminarGenero = async (req, res) => {
   try {
     const genero = req.obj;
+    deleteUpload(genero.imagen);
     await genero.destroy();
     return res.json({ message: "Genero eliminado correctamente" });
   } catch (error) {

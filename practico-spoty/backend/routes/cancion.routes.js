@@ -10,7 +10,7 @@ module.exports = (app) => {
     const controller = require("../controllers/cancion.controller");
 
     router.get("/", controller.getAllCanciones);
-    router.post("/", uploadAudio.single("archivo"), isJsonRequestValid, validateJson(cancionSquema), controller.crearCancion);
+    router.post("/", uploadAudio.single("archivo"), controller.crearCancion);
     router.put("/:id", uploadAudio.single("archivo"), isJsonRequestValid, validateJson(cancionSquema), getObjectOr404(db.cancion), controller.actualizarCancionPut);
     router.patch("/:id", uploadAudio.single("archivo"), isJsonRequestValid, validateJson(cancionOptionalSquema), getObjectOr404(db.cancion), controller.actualizarCancionPatch);
     router.get("/:id", getObjectOr404(db.cancion), controller.getCancionById);

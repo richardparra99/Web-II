@@ -6,6 +6,7 @@
         <link rel="stylesheet" href="styles/cuerpoEncabezado.css">
         <link rel="stylesheet" href="styles/style.css">
         <link rel="stylesheet" href="styles/canciones.css">
+        <link rel="stylesheet" href="styles/search.css">
         <title>lista de canciones</title>
     </head>
     <body>
@@ -14,6 +15,12 @@
             <h1>Spotify</h1>
             <div class="acciones-header">
                 <!-- se llena por JS -->
+            </div>
+
+            <div class="global-search">
+                <input id="globalSearch" type="search" placeholder="Buscar todo..." />
+                <button id="btnSearch" type="button">Buscar</button>
+                <div id="searchResults" class="search-results" style="display:none"></div>
             </div>
         </header>
         <main>
@@ -26,5 +33,6 @@
         
         <script src="js/canciones.js"></script>
         <script src="js/menuHeader.js"></script>
+        <script src="js/search.js"></script>
     </body>
 </html>

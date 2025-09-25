@@ -52,7 +52,7 @@
   // Dropdown: Géneros
   actions.appendChild(
     makeDropdown('Géneros', [
-      ['Ver géneros', 'index.html'],
+      ['Ver géneros', 'generos.html'],
     ])
   );
 
@@ -60,23 +60,20 @@
   actions.appendChild(
     makeDropdown('Artistas', [
       ['Ver artistas', 'artistas.html'],
-      ['Nuevo artista', 'formArtista.html'],
     ])
   );
 
   // Dropdown: Álbumes
   actions.appendChild(
     makeDropdown('Álbumes', [
-      ['Ver álbumes', 'albums.html'],
-      ['Nuevo álbum', 'formAlbum.html'],
+      ['Ver álbumes', 'albums.html']
     ])
   );
 
   // Dropdown: Canciones
   actions.appendChild(
     makeDropdown('Canciones', [
-      ['Ver canciones', 'canciones.html'],
-      ['Nueva canción', 'formCancion.html'],
+      ['Ver canciones', 'canciones.html']
     ])
   );
 
@@ -84,6 +81,9 @@
   actions.appendChild(
     makeDropdown('Admin', [
       ['género', 'AdmGenero.html'],
+      ['Artista', 'AdmArtista.html'],
+      ['Albumes', 'AdmAlbumes.html'],
+      ['Canciones', 'AdmCanciones.html'],
     ])
   );
 })();

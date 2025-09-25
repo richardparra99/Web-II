@@ -6,6 +6,7 @@
         <title>Practico Spotify</title>
         <link rel="stylesheet" href="styles/style.css">
         <link rel="stylesheet" href="styles/cuerpoEncabezado.css">
+        <link rel="stylesheet" href="styles/search.css">
     </head>
     <body>
         <header class="header-titulo">
@@ -20,9 +21,15 @@
                 <div class="dropdown">
                 </div>
             </div>
+            <!-- dentro del <header> -->
+            <div class="global-search">
+                <input id="globalSearch" type="search" placeholder="Buscar todo..." />
+                <button id="btnSearch" type="button">Buscar</button>
+                <div id="searchResults" class="search-results" style="display:none"></div>
+            </div>
         </header>
 
-        <main>
+        <main id="homeContent">
             <section>
                 <h2 style="margin:0 0 12px 0">Géneros</h2>
                 <div id="genresGrid" class="grid"></div>
@@ -50,7 +57,37 @@
                 <div id="songsEmptyHome" class="empty" style="display:none">Sin canciones por ahora.</div>
             </section>
         </main>
+
+
+        <section id="searchPanel" style="display:none; max-width:980px; margin:24px auto">
+            <h2 style="margin:0 0 12px 0">Resultados</h2>
+
+            <div id="srWrap">
+                <div id="srGenerosBlock" style="display:none">
+                    <h3>Géneros</h3>
+                    <div id="srGeneros" class="grid"></div>
+                </div>
+
+                <div id="srArtistasBlock" style="display:none; margin-top:24px">
+                    <h3>Artistas</h3>
+                    <div id="srArtistas" class="grid"></div>
+                </div>
+
+                <div id="srAlbumsBlock" style="display:none; margin-top:24px">
+                    <h3>Álbumes</h3>
+                    <div id="srAlbums" class="grid"></div>
+                </div>
+
+                <div id="srSongsBlock" style="display:none; margin-top:24px">
+                    <h3>Canciones</h3>
+                    <div id="srSongs" class="grid"></div>
+                </div>
+
+                <div id="srEmpty" class="empty" style="display:none">Sin resultados.</div>
+            </div>
+        </section>
         <script src="js/index.js"></script>
         <script src="js/menuHeader.js"></script>
+        <script src="js/search.js"></script>
     </body>
 </html>

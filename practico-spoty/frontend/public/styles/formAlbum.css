@@ -41,13 +41,22 @@ button {
 
 
 .btninicio {
-    background: #161a22;
-    color: #e6e9ef;
+    background-color: var(--color-oscuro);
+    color: var(--color-blanco);
     margin-top: 10px;
     margin-left: 50px;
     text-decoration: none;
     padding: 10px 15px 10px 15px;
     border-radius: 5px;
+}
+
+.btninicio:hover {
+    background-color: var(--color-oscuro-hover);
+}
+
+
+.btninicio {
+    transition: var(--tiempo-animacion);
 }
 
 .btnGuardar:hover{

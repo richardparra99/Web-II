@@ -5,16 +5,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="styles/cuerpoEncabezado.css">
         <link rel="stylesheet" href="styles/style.css">
-        <link rel="stylesheet" href="styles/album.css">
+        <link rel="stylesheet" href="styles/generos.css">
         <link rel="stylesheet" href="styles/search.css">
-        <title>lista de albumes</title>
+        <title>lista de generos</title>
     </head>
     <body>
         <header class="header-titulo">
             <img class="imagen_logo" src="img/logo-spotify.png" alt="logo">
             <h1>Spotify</h1>
             <div class="acciones-header"><!-- se llena por JS --></div>
-
             <div class="global-search">
                 <input id="globalSearch" type="search" placeholder="Buscar todo..." />
                 <button id="btnSearch" type="button">Buscar</button>
@@ -23,13 +22,13 @@
         </header>
 
         <main>
-            <h2 style="margin:0 0 12px 0">Álbumes</h2>
-            <div id="albumsGrid" class="grid"></div>
-            <div id="albumsEmpty" class="empty" style="display:none">Sin álbumes por ahora.</div>
+            <h2 style="margin:0 0 12px 0">Géneros</h2>
+            <div id="genresGrid" class="grid"></div>
+            <div id="genresEmpty" class="empty" style="display:none">Sin géneros por ahora.</div>
         </main>
 
         <script src="js/menuHeader.js"></script>
-        <script src="js/album.js"></script>
+        <script src="js/generos.js"></script>
         <script src="js/search.js"></script>
     </body>
 </html>

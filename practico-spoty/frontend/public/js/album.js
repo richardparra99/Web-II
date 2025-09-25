@@ -3,7 +3,7 @@ const API_BASE = "http://localhost:3000";
 const grid  = document.getElementById("albumsGrid");
 const empty = document.getElementById("albumsEmpty");
 
-// --- NUEVO: leer posibles filtros desde la URL ---
+// --- leer posibles filtros desde la URL ---
 const params          = new URLSearchParams(location.search);
 const filtroArtistaId = params.get("artistaId") || params.get("artistald"); // tolera typo
 const filtroNombre    = params.get("nombre");
@@ -22,7 +22,7 @@ async function loadAlbums(){
     const data = await res.json();
     let list = Array.isArray(data) ? data : [];
 
-    // --- NUEVO: filtrar por artista si corresponde ---
+    // filtrar por artista si corresponde
     if (filtroArtistaId) {
       const idStr = String(filtroArtistaId);
       list = list.filter(a => {
@@ -55,10 +55,6 @@ function renderAlbums(list){
         <div class="card-body">
           <h3 class="card-title">${escapeHtml(a.nombre)}</h3>
           <p style="margin:.25rem 0;color:#8b94a7;font-size:13px">${escapeHtml(artista)}</p>
-          <div style="margin-top:8px; display:flex; gap:6px;">
-            <button class="btn-edit" data-id="${a.id}">Editar</button>
-            <button class="btn-del"  data-id="${a.id}">Eliminar</button>
-          </div>
         </div>
       </article>
     `;
@@ -72,38 +68,14 @@ function renderAlbums(list){
       window.location.href = `canciones.html?albumId=${id}&nombre=${encodeURIComponent(name)}`;
     });
   });
-
-  // Editar (evita que dispare el click de la tarjeta)
-  grid.querySelectorAll(".btn-edit").forEach(btn=>{
-    btn.addEventListener("click", (ev)=>{
-      ev.stopPropagation();
-      const id = btn.getAttribute("data-id");
-      window.location.href = `formAlbum.html?id=${id}`;
-    });
-  });
-
-  // Eliminar (evita que dispare el click de la tarjeta)
-  grid.querySelectorAll(".btn-del").forEach(btn=>{
-    btn.addEventListener("click", async (ev)=>{
-      ev.stopPropagation();
-      const id = btn.getAttribute("data-id");
-      if (!confirm("¿Seguro que deseas eliminar este álbum?")) return;
-      try{
-        const res = await fetch(`${API_BASE}/albums/${id}`, { method: "DELETE" });
-        if (!res.ok) throw new Error("Error al eliminar");
-        loadAlbums();
-      }catch(err){
-        console.error(err);
-        alert("No se pudo eliminar el álbum");
-      }
-    });
-  });
 }
 
 function escapeHtml(s=""){
   return String(s)
-    .replaceAll("&","&amp;").replaceAll("<","&lt;")
-    .replaceAll(">","&gt;").replaceAll('"',"&quot;")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
 

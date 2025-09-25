@@ -1,16 +1,16 @@
 const API_BASE = "http://localhost:3000";
 
-const form = document.getElementById("frmArtista");
-const fileInput = document.getElementById("imagen");
+const form       = document.getElementById("frmArtista");
+const fileInput  = document.getElementById("imagen");
 const previewBox = document.getElementById("previewBox");
 const previewImg = document.getElementById("previewImg");
-const generoSelect = document.getElementById("generoId");
+const generosBox = document.getElementById("generosBox");
 
-// ===== util: obtener query param id =====
+// leer ?id= para modo edición
 const params = new URLSearchParams(location.search);
-const editId = params.get("id"); // null si es creación
+const editId = params.get("id");
 
-// ===== preview de archivo =====
+// ===== preview de imagen =====
 if (fileInput && previewBox && previewImg) {
   fileInput.addEventListener("change", () => {
     const file = fileInput.files?.[0];
@@ -19,47 +19,54 @@ if (fileInput && previewBox && previewImg) {
       previewImg.removeAttribute("src");
       return;
     }
-    const blobUrl = URL.createObjectURL(file);
+    const url = URL.createObjectURL(file);
     previewImg.onerror = () => { previewImg.src = "https://placehold.co/300x300?text=Artista"; };
-    previewImg.src = blobUrl;
+    previewImg.src = url;
     previewBox.style.display = "block";
   });
 }
 
-// ===== cargar géneros =====
-async function loadGeneros(selectedId){
-  if (!generoSelect) return;
-  try{
-    const res = await fetch(`${API_BASE}/generos`);
-    const data = await res.json();
-    generoSelect.innerHTML = `<option value="">Selecciona un género</option>`;
-    (Array.isArray(data) ? data : []).forEach(g => {
-      const opt = document.createElement("option");
-      opt.value = g.id;
-      opt.textContent = g.nombre;
-      generoSelect.appendChild(opt);
-    });
-    if (selectedId) generoSelect.value = String(selectedId);
-  }catch(e){
-    console.error("No se pudieron cargar géneros", e);
-  }
+// ===== pintar checkboxes de géneros =====
+function renderGenerosCheckboxes(list = [], selectedIds = []) {
+  if (!generosBox) return;
+  const selSet = new Set((selectedIds || []).map(String));
+  generosBox.innerHTML = (list || []).map(g => {
+    const checked = selSet.has(String(g.id)) ? "checked" : "";
+    const safe = String(g.nombre || "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;");
+    return `
+      <label class="checkbox-item">
+        <input type="checkbox" name="generos" value="${g.id}" ${checked}/>
+        <span>${safe}</span>
+      </label>
+    `;
+  }).join("");
 }
 
-// ===== si es edición, pre-cargar artista =====
-async function loadArtistIfEdit(){
-  if (!editId) {          // creación
-    await loadGeneros();  // sin selección previa
-    return;
-  }
-  try{
+// ===== cargar géneros de la API =====
+async function fetchGeneros() {
+  const res = await fetch(`${API_BASE}/generos`);
+  return await res.json();
+}
+
+// ===== si es edición, pre-cargar artista y marcar sus géneros =====
+async function initForm() {
+  try {
+    const generos = Array.isArray(await fetchGeneros()) ? await fetchGeneros() : [];
+    if (!editId) {
+      renderGenerosCheckboxes(generos, []);
+      return;
+    }
     const res = await fetch(`${API_BASE}/artistas/${editId}`);
-    if(!res.ok) throw new Error("No se pudo cargar el artista");
+    if (!res.ok) throw new Error("No se pudo cargar el artista");
     const a = await res.json();
 
     // nombre
     form.nombre.value = a.nombre || "";
 
-    // imagen actual (si hay)
+    // imagen actual
     if (a.imagen) {
       previewImg.src = a.imagen;
       previewBox.style.display = "block";
@@ -67,54 +74,57 @@ async function loadArtistIfEdit(){
       previewBox.style.display = "none";
     }
 
-    // seleccionar su primer género (si tu app maneja solo uno aquí)
-    const currentGenreId = (a.generos && a.generos[0]) ? a.generos[0].id : "";
-    await loadGeneros(currentGenreId);
-  }catch(err){
-    console.error(err);
-    await loadGeneros(); // fallback
+    // marcar géneros del artista
+    const idsSeleccionados = (a.generos || []).map(g => g.id);
+    renderGenerosCheckboxes(generos, idsSeleccionados);
+  } catch (e) {
+    // fallback: al menos mostramos los géneros
+    try {
+      const gens = await fetchGeneros();
+      renderGenerosCheckboxes(Array.isArray(gens) ? gens : [], []);
+    } catch {}
   }
 }
-loadArtistIfEdit();
+initForm();
 
-// ===== submit: crear o editar =====
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  // FormData para nombre + archivo (si hay)
+  const checked = Array.from(form.querySelectorAll('input[name="generos"]:checked'))
+                       .map(ch => Number(ch.value))
+                       .filter(n => Number.isFinite(n));
+
   const fd = new FormData();
   fd.append("nombre", form.nombre.value.trim() || "");
   if (fileInput && fileInput.files && fileInput.files[0]) {
-    fd.append("imagen", fileInput.files[0]); // multer: upload.single("imagen")
+    fd.append("imagen", fileInput.files[0]);
   }
 
-  try{
+  try {
     let artista;
     if (!editId) {
-      // CREAR
+      // crear artista
       const res = await fetch(`${API_BASE}/artistas`, { method: "POST", body: fd });
-      if(!res.ok) return;
+      if (!res.ok) return;
       artista = await res.json();
     } else {
-      // EDITAR (PATCH con multer)
+      // editar artista (PATCH)
       const res = await fetch(`${API_BASE}/artistas/${editId}`, { method: "PATCH", body: fd });
-      if(!res.ok) return;
+      if (!res.ok) return;
       artista = await res.json();
     }
 
-    // asignar/actualizar género si se seleccionó uno
-    if (generoSelect && generoSelect.value) {
-      const generoId = Number(generoSelect.value);
+    // asignar/actualizar géneros si hay selección
+    if (checked.length) {
       await fetch(`${API_BASE}/artistas/${artista.id}/generos`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ generos: [generoId] })
+        body: JSON.stringify({ generos: checked })
       });
     }
 
-    // volver al listado
     window.location.href = "./artistas.html";
-  }catch(err){
+  } catch (err) {
     console.error(err);
   }
 });
