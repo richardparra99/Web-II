@@ -1,4 +1,5 @@
 const db = require("../models");
+const { deleteUpload } = require("../utils/deleteUpload");
 
 exports.getAllArtistas = async (req, res) => {
   try {
@@ -26,7 +27,7 @@ exports.getArtistasById = async (req, res) => {
 
 exports.crearArtistas = async (req, res) => {
   try {
-    const { nombre } = req.body; // multipart/form-data
+    const { nombre } = req.body;
     const imagenPath = req.file ? `/uploads/${req.file.filename}` : null;
 
     if (!nombre || !String(nombre).trim()) {
@@ -58,7 +59,6 @@ exports.actulizarArtistaPut = async (req, res) => {
     if (req.file) {
       art.imagen = `/uploads/${req.file.filename}`;
     } else if (typeof req.body.imagen !== "undefined") {
-      // permite limpiar imagen enviando imagen=""
       art.imagen = req.body.imagen || null;
     }
 
@@ -96,6 +96,7 @@ exports.actualizarArtistaPatch = async (req, res) => {
 exports.eliminarArtista = async (req, res) => {
   try {
     const art = req.obj;
+    deleteUpload(art.imagen);
     await art.destroy();
     return res.json({ message: "Artista eliminado correctamente" });
   } catch (error) {
@@ -106,7 +107,7 @@ exports.eliminarArtista = async (req, res) => {
 exports.setGeneros = async (req, res) => {
   try {
     const { generos } = req.body;
-    const art = req.obj; // viene del getObjectOr404
+    const art = req.obj;
     await art.setGeneros(generos);
     const withGen = await db.artista.findByPk(art.id, {
       include: [{ model: db.genero, as: "generos", through: { attributes: [] } }],
@@ -119,12 +120,11 @@ exports.setGeneros = async (req, res) => {
 
 exports.addGeneros = async (req, res) => {
   try {
-    const art = req.obj; // getObjectOr404
+    const art = req.obj;
     const { generoId } = req.params;
     const gen = await db.genero.findByPk(generoId);
     if (!gen) return res.status(404).json({ error: "Genero no encontrado" });
 
-    // Por el alias "generos" Sequelize genera addGenero/addGeneros. Ambas suelen existir.
     if (typeof art.addGenero === "function") {
       await art.addGenero(gen);
     } else {

@@ -21,7 +21,6 @@ form {
 }
 
 input {
-    width: 300px;
     margin-top: 10px;
     margin-bottom: 10px;
     padding: 8px 15px 8px 15px;
@@ -41,13 +40,22 @@ button {
 
 
 .btninicio {
-    background: #161a22;
-    color: #e6e9ef;
+    background-color: var(--color-oscuro);
+    color: var(--color-blanco);
     margin-top: 10px;
     margin-left: 50px;
     text-decoration: none;
     padding: 10px 15px 10px 15px;
     border-radius: 5px;
+}
+
+.btninicio:hover {
+    background-color: var(--color-oscuro-hover);
+}
+
+
+.btninicio {
+    transition: var(--tiempo-animacion);
 }
 
 .btnGuardar:hover{
@@ -64,11 +72,29 @@ button {
   height: 50px;
 }
 
-select {
-    width: 333px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    padding: 8px 15px 8px 15px;
-    border-radius: 5px;
-    border: 1px solid gray;
+
+.generos-fieldset {
+  border: none;
+  margin-top: 12px;
+  padding: 0;
+}
+
+.generos-fieldset legend {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.generos-grid {
+  display: flex;
+  flex-direction: column; /* lista vertical ordenada */
+  gap: 4px; /* espacio entre cada fila */
+  margin-bottom: 6px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;            /* separa el checkbox del texto */
+  cursor: pointer;
+  font-size: 15px;
 }

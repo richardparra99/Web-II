@@ -52,16 +52,12 @@ function renderArtists(list){
         <div class="card-body">
           <h3 class="card-title">${escapeHtml(a.nombre)}</h3>
           <p style="margin:.25rem 0;color:#8b94a7;font-size:13px">${escapeHtml(gens)}</p>
-          <div style="margin-top:8px; display:flex; gap:6px;">
-            <button class="btn-edit" data-id="${a.id}">Editar</button>
-            <button class="btn-del"  data-id="${a.id}">Eliminar</button>
-          </div>
         </div>
       </article>
     `;
   }).join("");
 
-  // NUEVO: click en la tarjeta → navegar a álbumes del artista
+  // Click en la tarjeta → navegar a álbumes del artista
   grid.querySelectorAll(".artist-card").forEach(card=>{
     card.addEventListener("click", ()=>{
       const id   = card.getAttribute("data-id");
@@ -69,38 +65,14 @@ function renderArtists(list){
       window.location.href = `albums.html?artistaId=${id}&nombre=${encodeURIComponent(name)}`;
     });
   });
-
-  // Editar (evita abrir álbumes)
-  grid.querySelectorAll(".btn-edit").forEach(btn => {
-    btn.addEventListener("click", (ev) => {
-      ev.stopPropagation();
-      const id = btn.getAttribute("data-id");
-      window.location.href = `formArtista.html?id=${id}`;
-    });
-  });
-
-  // Eliminar (evita abrir álbumes)
-  grid.querySelectorAll(".btn-del").forEach(btn => {
-    btn.addEventListener("click", async (ev) => {
-      ev.stopPropagation();
-      const id = btn.getAttribute("data-id");
-      if (!confirm("¿Seguro que deseas eliminar este artista?")) return;
-      try{
-        const res = await fetch(`${API_BASE}/artistas/${id}`, { method: "DELETE" });
-        if (!res.ok) throw new Error("Error al eliminar");
-        loadArtistas();
-      }catch(err){
-        console.error(err);
-        alert("No se pudo eliminar el artista");
-      }
-    });
-  });
 }
 
 function escapeHtml(s=""){
   return String(s)
-    .replaceAll("&","&amp;").replaceAll("<","&lt;")
-    .replaceAll(">","&gt;").replaceAll('"',"&quot;")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
 

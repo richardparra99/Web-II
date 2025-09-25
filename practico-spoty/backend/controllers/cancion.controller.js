@@ -2,7 +2,7 @@ const db = require("../models");
 
 function getUploadUrl(file) {
   if (!file) return null;
-  return `/uploads/${file.filename}`; // mismo patrón que álbum/artista
+  return `/uploads/${file.filename}`;
 }
 
 exports.getAllCanciones = async (req, res) => {

@@ -1,6 +1,6 @@
 const db = require("../models");
+const { deleteUpload } = require("../utils/deleteUpload");
 
-// helper: devuelve ruta relativa a /uploads
 function getUploadUrl(file) {
   if (!file) return null;
   return `/uploads/${file.filename}`;
@@ -115,6 +115,7 @@ exports.actualizarAlbumPatch = async (req, res) => {
 exports.eliminarAlbum = async (req, res) => {
   try {
     const alb = req.obj;
+    deleteUpload(alb.imagen);
     await alb.destroy();
     return res.json({ message: "Álbum eliminado correctamente" });
   } catch (error) {

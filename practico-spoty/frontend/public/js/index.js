@@ -41,10 +41,6 @@ function renderGenres(list){
              onerror="this.src='https://placehold.co/300x300?text=Genero'">
         <div class="card-body">
           <h3 class="card-title">${escapeHtml(g.nombre)}</h3>
-          <div style="margin-top:8px; display:flex; gap:6px;">
-            <button class="btn-edit-genero" data-id="${g.id}">Editar</button>
-            <button class="btn-del-genero" data-id="${g.id}">Eliminar</button>
-          </div>
         </div>
       </article>
     `;
@@ -56,32 +52,6 @@ function renderGenres(list){
       const id   = card.dataset.id;
       const name = card.dataset.name;
       window.location.href = `artistas.html?generoId=${id}&nombre=${encodeURIComponent(name)}`;
-    });
-  });
-
-  // Botón Editar
-  grid.querySelectorAll(".btn-edit-genero").forEach(btn=>{
-    btn.addEventListener("click", (ev)=>{
-      ev.stopPropagation();
-      const id = btn.getAttribute("data-id");
-      window.location.href = `formGenero.html?id=${id}`;
-    });
-  });
-
-  // Botón Eliminar
-  grid.querySelectorAll(".btn-del-genero").forEach(btn=>{
-    btn.addEventListener("click", async (ev)=>{
-      ev.stopPropagation();
-      const id = btn.getAttribute("data-id");
-      if (!confirm("¿Seguro que deseas eliminar este género?")) return;
-      try{
-        const res = await fetch(`${API_BASE}/generos/${id}`, { method: "DELETE" });
-        if (!res.ok) throw new Error("Error al eliminar");
-        loadGenres();
-      }catch(err){
-        console.error(err);
-        alert("No se pudo eliminar el género");
-      }
     });
   });
 }

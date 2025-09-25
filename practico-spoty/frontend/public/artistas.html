@@ -6,6 +6,7 @@
         <link rel="stylesheet" href="styles/style.css">
         <link rel="stylesheet" href="styles/cuerpoEncabezado.css">
         <link rel="stylesheet" href="styles/artista.css">
+        <link rel="stylesheet" href="styles/search.css">
         <title>Listado de artistas</title>
     </head>
     <body>
@@ -14,13 +15,18 @@
             <h1>Spotify</h1>
             <div class="acciones-header">
             <!-- Menú Géneros -->
-            <div class="dropdown">
-                
+                <div class="dropdown">
+                    
+                </div>
+                <!-- Menú Artistas -->
+                <div class="dropdown">
+                    
+                </div>
             </div>
-            <!-- Menú Artistas -->
-            <div class="dropdown">
-                
-            </div>
+            <div class="global-search">
+                <input id="globalSearch" type="search" placeholder="Buscar todo..." />
+                <button id="btnSearch" type="button">Buscar</button>
+                <div id="searchResults" class="search-results" style="display:none"></div>
             </div>
         </header>
         <main>
@@ -31,5 +37,6 @@
         
         <script src="js/artistas.js"></script>
         <script src="js/menuHeader.js"></script>
+        <script src="js/search.js"></script>
     </body>
 </html>
