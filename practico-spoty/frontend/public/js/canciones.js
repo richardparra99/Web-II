@@ -4,12 +4,10 @@ const API_BASE = "http://localhost:3000";
 const grid  = document.getElementById("songsGrid");
 const empty = document.getElementById("songsEmpty");
 
-// Leer query params para filtrar por álbum
 const params        = new URLSearchParams(location.search);
 const filtroAlbumId = params.get("albumId");
 const filtroNombre  = params.get("nombre");
 
-// Ajustar título si hay filtro
 const h2 = document.querySelector("main h2");
 if (h2 && filtroAlbumId) {
   h2.textContent = filtroNombre ? `Canciones de ${filtroNombre}` : "Canciones por álbum";
@@ -23,7 +21,6 @@ async function loadCanciones(){
     if(!res.ok) throw new Error("Error al cargar canciones");
     let data = await res.json();
 
-    // Filtrar por álbum si corresponde
     if (filtroAlbumId) {
       data = (Array.isArray(data) ? data : []).filter(c =>
         String(c.albumId ?? (c.album && c.album.id)) === String(filtroAlbumId)
@@ -45,7 +42,6 @@ function renderCanciones(list){
   }
   grid.innerHTML = list.map(c=>{
     const audioSrc = c.archivo || "";
-    // <-- Cambios aquí: si no hay álbum, mostrar "Sencillo" y artista en "—"
     const album   = c.album ? c.album.nombre : "Sencillo";
     const artista = c.album && c.album.artista ? c.album.artista.nombre : "—";
 

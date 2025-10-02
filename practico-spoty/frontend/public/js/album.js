@@ -3,12 +3,10 @@ const API_BASE = "http://localhost:3000";
 const grid  = document.getElementById("albumsGrid");
 const empty = document.getElementById("albumsEmpty");
 
-// --- leer posibles filtros desde la URL ---
 const params          = new URLSearchParams(location.search);
-const filtroArtistaId = params.get("artistaId") || params.get("artistald"); // tolera typo
+const filtroArtistaId = params.get("artistaId") || params.get("artistald");
 const filtroNombre    = params.get("nombre");
 
-// Ajustar título si hay filtro
 const h2 = document.querySelector("main h2");
 if (h2 && filtroArtistaId) {
   h2.textContent = filtroNombre ? `Álbumes de ${filtroNombre}` : "Álbumes por artista";
@@ -22,7 +20,6 @@ async function loadAlbums(){
     const data = await res.json();
     let list = Array.isArray(data) ? data : [];
 
-    // filtrar por artista si corresponde
     if (filtroArtistaId) {
       const idStr = String(filtroArtistaId);
       list = list.filter(a => {

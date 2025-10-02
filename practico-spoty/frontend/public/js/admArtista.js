@@ -48,7 +48,6 @@ function renderRows(list){
 async function onTableClick(e){
   const btn = e.target.closest("button[data-action]");
   if(!btn) {
-    // rearmar delegación si el click fue fuera de botones
     tbody.addEventListener("click", onTableClick, { once: true });
     return;
   }
@@ -57,7 +56,7 @@ async function onTableClick(e){
 
   if(action === "edit"){
     window.location.href = `formArtista.html?id=${id}`;
-    return; // delegación se vuelve a armar al volver
+    return;
   }
 
   if(action === "del"){
