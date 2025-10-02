@@ -76,7 +76,6 @@ exports.actualizarGeneroPatch = async (req, res) => {
       const imagenPath = `/uploads/${req.file.filename}`;
       genero.imagen = imagenPath;
     } else if (typeof req.body.imagen !== "undefined") {
-      // permitir limpiar imagen con imagen=""
       genero.imagen = req.body.imagen || null;
     }
 

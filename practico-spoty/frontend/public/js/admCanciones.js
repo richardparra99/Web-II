@@ -49,7 +49,6 @@ function renderRows(list){
     `;
   }).join("");
 
-  // Delegación de eventos
   tbody.addEventListener("click", onTableClick, { once: true });
 }
 

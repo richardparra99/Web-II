@@ -6,7 +6,6 @@ const previewBox = document.getElementById("previewBox");
 const previewImg = document.getElementById("previewImg");
 const generosBox = document.getElementById("generosBox");
 
-// leer ?id= para modo edición
 const params = new URLSearchParams(location.search);
 const editId = params.get("id");
 
@@ -26,7 +25,6 @@ if (fileInput && previewBox && previewImg) {
   });
 }
 
-// ===== pintar checkboxes de géneros =====
 function renderGenerosCheckboxes(list = [], selectedIds = []) {
   if (!generosBox) return;
   const selSet = new Set((selectedIds || []).map(String));
@@ -45,13 +43,11 @@ function renderGenerosCheckboxes(list = [], selectedIds = []) {
   }).join("");
 }
 
-// ===== cargar géneros de la API =====
 async function fetchGeneros() {
   const res = await fetch(`${API_BASE}/generos`);
   return await res.json();
 }
 
-// ===== si es edición, pre-cargar artista y marcar sus géneros =====
 async function initForm() {
   try {
     const generos = Array.isArray(await fetchGeneros()) ? await fetchGeneros() : [];
@@ -103,12 +99,10 @@ form.addEventListener("submit", async (e) => {
   try {
     let artista;
     if (!editId) {
-      // crear artista
       const res = await fetch(`${API_BASE}/artistas`, { method: "POST", body: fd });
       if (!res.ok) return;
       artista = await res.json();
     } else {
-      // editar artista (PATCH)
       const res = await fetch(`${API_BASE}/artistas/${editId}`, { method: "PATCH", body: fd });
       if (!res.ok) return;
       artista = await res.json();

@@ -9,7 +9,6 @@ const artistaSelect = document.getElementById("artistaId");
 const params = new URLSearchParams(location.search);
 const editId = params.get("id");
 
-// Preview
 fileInput.addEventListener("change", () => {
   const file = fileInput.files[0];
   if (!file) {
@@ -25,7 +24,6 @@ fileInput.addEventListener("change", () => {
   reader.readAsDataURL(file);
 });
 
-// Cargar artistas
 async function loadArtistas() {
   const res = await fetch(`${API_BASE}/artistas`);
   const data = await res.json();
@@ -38,7 +36,6 @@ async function loadArtistas() {
   });
 }
 
-// Cargar álbum si es edición
 async function loadAlbum(id){
   const res = await fetch(`${API_BASE}/albums/${id}`);
   if(!res.ok) return;
@@ -53,19 +50,17 @@ async function loadAlbum(id){
   }
 }
 
-// Init
 (async () => {
   await loadArtistas();
   if (editId) await loadAlbum(editId);
 })();
 
-// Enviar
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const formData = new FormData(form); // nombre, artistaId, imagen (si hay)
+  const formData = new FormData(form);
   if (!fileInput.files.length) {
-    formData.delete("imagen"); // no cambiar imagen si no seleccionas nueva
+    formData.delete("imagen");
   }
 
   try{

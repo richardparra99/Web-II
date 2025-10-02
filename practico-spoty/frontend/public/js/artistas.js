@@ -57,7 +57,6 @@ function renderArtists(list){
     `;
   }).join("");
 
-  // Click en la tarjeta → navegar a álbumes del artista
   grid.querySelectorAll(".artist-card").forEach(card=>{
     card.addEventListener("click", ()=>{
       const id   = card.getAttribute("data-id");
