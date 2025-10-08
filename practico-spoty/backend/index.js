@@ -2,12 +2,13 @@ require('dotenv').config()
 const express = require('express')
 const bodyParser = require("body-parser");
 const db = require("./models/");
+const cors = require('cors');
 //const fileUpload = require('express-fileupload');
 
 
 const app = express()
 const port = 3000
-
+app.use(cors());
 app.use(express.static('../frontend/public'));
 
 app.use(bodyParser.urlencoded({ extended: true }));
