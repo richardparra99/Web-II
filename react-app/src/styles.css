@@ -1,0 +1,18 @@
+.label {
+    display: block;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.search-text-field {
+    margin-bottom: 20px;
+    display: inline-block;
+    position: relative;
+}
+
+.search-text-field img {
+    width: 15px;
+    position: absolute;
+    right: 7px;
+    top: 11px;
+}
