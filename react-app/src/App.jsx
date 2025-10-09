@@ -1,5 +1,5 @@
-import FormPrueba from "./FormPrueba"
-import ListaDocente from "./ListaDocente"
+import FormPrueba from "./FormPersona"
+import ListaDocente from "./ListaPersona"
 
 const App = () => {
   return(
