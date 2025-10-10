@@ -1,12 +1,12 @@
-import FormPrueba from "./FormPersona"
-import ListaDocente from "./ListaPersona"
+import FormPersona from "./pages/personas/FormPersona"
+import ListaPersona from "./pages/personas/ListaPersona"
 
 const App = () => {
   return(
     <div>
       <h1>Hola! Bienvenidos a react</h1>
-      <FormPrueba/>
-      <ListaDocente/>
+      <FormPersona/>
+      <ListaPersona/>
     </div>
   )
 }
