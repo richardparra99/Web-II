@@ -13,6 +13,7 @@
     "@sequelize/mariadb": "^7.0.0-alpha.46",
     "body-parser": "^2.2.0",
     "bootstrap": "^5.3.7",
+    "crypto": "^1.0.1",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "express-fileupload": "^1.5.2",

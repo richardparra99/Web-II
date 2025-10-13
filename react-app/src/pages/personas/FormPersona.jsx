@@ -22,7 +22,11 @@ const FormPersona = () => {
             return;
         }
         const fetchPersona = () => {
-            axios.get(`http://localhost:3000/personas/${id}`)
+            axios.get(`http://localhost:3000/personas/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                }
+            })
             .then((response) => {
                 const persona = response.data;
                 setNombre(persona.nombre || "");
@@ -76,7 +80,11 @@ const FormPersona = () => {
     }
 
     const sendPersonaActualizar = (persona) => {
-        axios.put(`http://localhost:3000/personas/${id}`, persona)
+        axios.put(`http://localhost:3000/personas/${id}`, persona, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        })
         .then((response) => {
             console.log(response.data);
             navigate("/");
@@ -87,7 +95,11 @@ const FormPersona = () => {
     }
 
     const sendPersonaCreate = (persona) => {
-        axios.post("http://localhost:3000/personas", persona).then((response) => {
+        axios.post("http://localhost:3000/personas", persona, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        }).then((response) => {
             console.log(response.data);
             navigate("/");
         }).catch((error) => {
