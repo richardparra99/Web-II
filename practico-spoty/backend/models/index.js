@@ -10,6 +10,7 @@ const genero = require("./genero")(sequelize);
 const artista = require("./artista")(sequelize);
 const cancion = require("./cancion")(sequelize);
 const artistaGenero = require("./artista_genero")(sequelize);
+const authToken = require("./authToken")(sequelize);
 
 persona.hasMany(materia, { foreignKey: "idDocente", as: "materias" });
 materia.belongsTo(persona, { foreignKey: "idDocente", as: "docente" });
@@ -44,6 +45,7 @@ module.exports = {
     cancion,
     album,
     artistaGenero,
+    authToken,
     sequelize,
     Sequelize: sequelize.Sequelize
 }

@@ -11,7 +11,11 @@ const ListaPersona = () => {
     const [listaPersona, setListaPersona] = useState([]);
     const [personasFiltradas, setPersonasFiltradas] = useState([]);
     const fetchPersona = () => {
-        axios.get("http://localhost:3000/personas")
+        axios.get("http://localhost:3000/personas", {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        })
         .then((response) => {
             setListaPersona(response.data);
             setPersonasFiltradas(response.data);
@@ -48,7 +52,10 @@ const ListaPersona = () => {
             return;
         }
         const nuevaFiltro = listaPersona.filter((Persona) => {
-            return Persona.nombre.toLowerCase().includes(text);
+            return Persona.nombre.toLowerCase().includes(text)
+            || Persona.apellido.toLowerCase().includes(text)
+            || Persona.edad.toString().includes(text)
+            || Persona.ciudad?.toLowerCase().includes(text);
         });
         setPersonasFiltradas(nuevaFiltro);
     }
@@ -67,7 +74,7 @@ const ListaPersona = () => {
                             <SearchTextField className={"mt-2"} onTextChanged={onSearchChanged} />
                         </Col>
                     </Row>
-                    <Table striped bordered hover size="sm">
+                    <Table striped bordered hover size="sm" responsive>
                         <thead>
                             <tr>
                                 <th>ID</th>

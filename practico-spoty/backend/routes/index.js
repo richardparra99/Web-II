@@ -5,4 +5,5 @@ module.exports = app => {
     require('./album.routes')(app);
     require('./cancion.routes')(app);
     require("./search.routes")(app);
+    require("./auth.routes")(app);
 };

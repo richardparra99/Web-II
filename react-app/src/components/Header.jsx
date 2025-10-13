@@ -1,7 +1,15 @@
 import { Button, Container, Form, Nav, Navbar, NavDropdown, NavLink } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
+
+    const navigate = useNavigate();
+    const onLogoutClick = () => {
+        localStorage.removeItem("token");
+        navigate("/login");
+    }
+    const token = localStorage.getItem("token");
+
     return (
         <Navbar bg="primary" data-bs-theme="dark">
         <Container>
@@ -13,13 +21,21 @@ const Header = () => {
                 style={{ maxHeight: '100px' }}
                 navbarScroll
             >
-                <Nav.Link href="/">Home</Nav.Link>
-                <NavDropdown title="Personas" id="navbarScrollingDropdown">
-                <Link className="dropdown-item" to="/">Listas Personas</Link>
-                <Link className="dropdown-item" to="/personas/create">
-                    Crear Persona
-                </Link>
-                </NavDropdown>
+                {token ? <>
+                        <Link className="nav-link" to="/">Home</Link>
+                        <NavDropdown title="Personas" id="navbarScrollingDropdown">
+                        <Link className="dropdown-item" to="/">Listas Personas</Link>
+                        <Link className="dropdown-item" to="/personas/create">
+                            Crear Persona
+                        </Link>
+                        </NavDropdown>
+                        <button className="nav-link" onClick={onLogoutClick}>
+                            Cerrar Sesion
+                        </button>
+                    </> : <>
+                        <Link className="nav-link" to="/login">Iniciar Sesion</Link>
+                        <Link className="nav-link" to="/register">Registrarse</Link>
+                </>}
             </Nav>
             </Navbar.Collapse>
         </Container>
