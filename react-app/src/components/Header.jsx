@@ -1,14 +1,15 @@
-import { Button, Container, Form, Nav, Navbar, NavDropdown, NavLink } from "react-bootstrap";
+import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import { getAccessToken } from "../../utils/TokenUtilities";
+import useAuthentication from "../../hooks/userAuthToken";
 
 const Header = () => {
 
-    const navigate = useNavigate();
+    const {doLogout, userEmail} = useAuthentication();
     const onLogoutClick = () => {
-        localStorage.removeItem("token");
-        navigate("/login");
+        doLogout();
     }
-    const token = localStorage.getItem("token");
+    const token = getAccessToken();
 
     return (
         <Navbar bg="primary" data-bs-theme="dark">
@@ -24,14 +25,16 @@ const Header = () => {
                 {token ? <>
                         <Link className="nav-link" to="/">Home</Link>
                         <NavDropdown title="Personas" id="navbarScrollingDropdown">
-                        <Link className="dropdown-item" to="/">Listas Personas</Link>
-                        <Link className="dropdown-item" to="/personas/create">
-                            Crear Persona
-                        </Link>
+                            <Link className="dropdown-item" to="/">Listas Personas</Link>
+                            <Link className="dropdown-item" to="/personas/create">
+                                Crear Persona
+                            </Link>
                         </NavDropdown>
-                        <button className="nav-link" onClick={onLogoutClick}>
-                            Cerrar Sesion
-                        </button>
+                        <NavDropdown title={userEmail} id="logout-dropdown">
+                            <button className="dropdown-item" onClick={onLogoutClick}>
+                                Cerrar Sesion
+                            </button>
+                        </NavDropdown>
                     </> : <>
                         <Link className="nav-link" to="/login">Iniciar Sesion</Link>
                         <Link className="nav-link" to="/register">Registrarse</Link>

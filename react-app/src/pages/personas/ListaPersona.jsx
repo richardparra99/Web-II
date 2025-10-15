@@ -1,25 +1,23 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import SearchTextField from "../../components/SearchTextField";
 import Header from "../../components/Header";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import useAuthentication from "../../../hooks/userAuthToken";
+import { eliminarPersona, getAllPersonas } from "../../../services/PersonaService";
 
 const ListaPersona = () => {
     const navegate = useNavigate();
+    useAuthentication(true);
     const [listaPersona, setListaPersona] = useState([]);
     const [personasFiltradas, setPersonasFiltradas] = useState([]);
     const fetchPersona = () => {
-        axios.get("http://localhost:3000/personas", {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`
-            }
-        })
-        .then((response) => {
-            setListaPersona(response.data);
-            setPersonasFiltradas(response.data);
-            console.log(response.data);
+        getAllPersonas().then((personas) => {
+            setListaPersona(personas);
+            setPersonasFiltradas(personas);
+        }).catch(() => {
+            alert("Error al cargar las personas")
         });
     }
 
@@ -36,13 +34,11 @@ const ListaPersona = () => {
         if (!window.confirm("Estas seguro de eliminar la persona")) {
             return;
         }
-        axios.delete(`http://localhost:3000/personas/${id}`)
-        .then(() => {
+        eliminarPersona(id).then(() => {
             fetchPersona();
-        }).catch((error) => {
-            console.error(error);
-            alert("Error al eliminar persona");
-        });
+        }).catch(() => {
+            alert("Error al eliminar a la persona");
+        })
     }
 
     const onSearchChanged = (event) => {
