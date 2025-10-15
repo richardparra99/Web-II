@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Form, FormControl, FormGroup, Row } from "react-bootstrap";
 import RequiredLabel from "../../components/RequiredLabel";
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../../components/Header";
 import moment from "moment";
+import useAuthentication from "../../../hooks/userAuthToken";
+import { actualizarPersona, CrearPersona, getPersonaById } from "../../../services/PersonaService";
 
 const FormPersona = () => {
     const navigate = useNavigate();
+    useAuthentication(true);
     const {id} = useParams(); //obtiene desde la url
     const [validated, setValidated] = useState(false);
     const [nombre, setNombre] = useState("");
@@ -16,18 +18,12 @@ const FormPersona = () => {
     const [ciudad, setCiudad] = useState("");
     const [fecha, setFecha] = useState("");
 
-
     useEffect(() => {
         if(!id){
             return;
         }
         const fetchPersona = () => {
-            axios.get(`http://localhost:3000/personas/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`
-                }
-            })
-            .then((response) => {
+            getPersonaById(id).then((response) => {
                 const persona = response.data;
                 setNombre(persona.nombre || "");
                 setApellido(persona.apellido || "");
@@ -36,10 +32,9 @@ const FormPersona = () => {
                 setFecha(moment(persona.fechaNacmiento).format("YYYY-MM-DD" || ""));
             })
             .catch((error) => {
-                console.error(error);
                 alert("Error al cargar a la persona");
                 navigate("/");
-            })
+            });
         }
         fetchPersona();
     }, [id])
@@ -80,31 +75,20 @@ const FormPersona = () => {
     }
 
     const sendPersonaActualizar = (persona) => {
-        axios.put(`http://localhost:3000/personas/${id}`, persona, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`
-            }
-        })
-        .then((response) => {
-            console.log(response.data);
+        actualizarPersona(id, persona).then((personaUpdate) => {
+            console.log(personaUpdate);
             navigate("/");
-        }).catch((error) => {
-            console.error(error);
-            alert("Error al guardar a la persona");
-        });
+        }).catch(() => {
+            alert("Error al actualizar persona");
+        })
     }
 
     const sendPersonaCreate = (persona) => {
-        axios.post("http://localhost:3000/personas", persona, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`
-            }
-        }).then((response) => {
-            console.log(response.data);
+        CrearPersona({persona}).then((nuevaPersona) =>{
+            console.log(nuevaPersona);
             navigate("/");
-        }).catch((error) => {
-            console.error(error);
-            alert("Error al guardar la persona");
+        }).catch(() => {
+            alert("Error al crear docente");
         });
     }
 

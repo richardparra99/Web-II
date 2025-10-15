@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Button, Card, Col, Container, Form, FormControl, FormGroup, Row } from "react-bootstrap";
 import RequiredLabel from "../../components/RequiredLabel";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
+import useAuthentication from "../../../hooks/userAuthToken";
 
 const FormLogin = () => {
     const navigate = useNavigate();
+    const {doLogin} = useAuthentication(false);
     const [validated, setValidated] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -31,17 +32,9 @@ const FormLogin = () => {
     const sendLoginForm = () => {
         const loginData = {
             email,
-            password
+            password,
         }
-        axios.post("http://localhost:3000/auth/login", loginData)
-            .then((response) => {
-                console.log(response.data);
-                localStorage.setItem("token", response.data.token);
-                navigate("/");
-            }).catch((error) => {
-                console.error(error);
-                alert("Error al iniciar sesion");
-            })
+        doLogin(loginData);
     }
 
     const onClickCancelar = () => {
