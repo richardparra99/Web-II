@@ -84,11 +84,11 @@ const FormPersona = () => {
     }
 
     const sendPersonaCreate = (persona) => {
-        CrearPersona({persona}).then((nuevaPersona) =>{
+        CrearPersona(persona).then((nuevaPersona) =>{
             console.log(nuevaPersona);
             navigate("/");
         }).catch(() => {
-            alert("Error al crear docente");
+            alert("Error al crear a la persona");
         });
     }
 
