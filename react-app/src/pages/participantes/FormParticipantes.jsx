@@ -1,43 +1,42 @@
-import { useEffect, useState } from "react";
-import { Button, Card, Col, Container, Form, FormControl, FormGroup, Row } from "react-bootstrap";
+import { useState } from "react";
+import { Button, Card, Col, Container, Form, FormControl, Row } from "react-bootstrap";
 import Header from "../../components/Header";
 import RequiredLabel from "../../components/RequiredLabel";
 import { useNavigate, useParams } from "react-router-dom";
 import useAuthentication from "../../../hooks/userAuthToken";
-import { crearParticipante, getParticipantesBySorteo } from "../../../services/ParticipanteService";
+import { crearParticipante } from "../../../services/ParticipanteService";
 
 const FormParticipante = () => {
     const navigate = useNavigate();
     useAuthentication(true);
-    const { idSorteo } = useParams(); // viene de /sorteos/:idSorteo/participantes/create
+    const { idSorteo } = useParams();
 
     const [validated, setValidated] = useState(false);
     const [nombre, setNombre] = useState("");
     const [email, setEmail] = useState("");
     const [wishlist, setWishlist] = useState("");
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
+        const form = e.currentTarget;
         setValidated(true);
 
-        if (!nombre || !email) {
-            alert("El nombre y el email son obligatorios");
-            return;
-        }
+        // Si el formulario no pasa las validaciones, no continúa
+        if (!form.checkValidity()) return;
 
         const participante = {
-            nombre,
-            email,
-            wishlist,
+            nombre: nombre.trim(),
+            email: email.trim(),
+            wishlist: wishlist.trim(),
             idSorteo: parseInt(idSorteo)
         };
 
-        crearParticipante(participante)
-            .then(() => {
-                alert("Participante creado correctamente");
-                navigate(`/sorteos/${idSorteo}/participantes`);
-            })
-            .catch(() => alert("Error al crear participante"));
+        try {
+            await crearParticipante(participante);
+            navigate(`/sorteos/${idSorteo}/participantes`);
+        } catch (error) {
+            console.error("Error al crear participante:", error);
+        }
     };
 
     const onCancelar = () => {
@@ -52,41 +51,49 @@ const FormParticipante = () => {
                     <Col md={6}>
                         <Card>
                             <Card.Body>
+                                <h2>Nuevo participante</h2>
+
                                 <Form noValidate validated={validated} onSubmit={onSubmit}>
-                                    <h2>Nuevo participante</h2>
-                                    <FormGroup className="mb-3">
-                                        <RequiredLabel htmlFor="txtNombre">Nombre</RequiredLabel>
-                                        <FormControl
-                                            id="txtNombre"
+                                    {/* Nombre */}
+                                    <Form.Group className="mb-3" controlId="txtNombre">
+                                        <RequiredLabel>Nombre</RequiredLabel>
+                                        <Form.Control
                                             type="text"
-                                            required
                                             value={nombre}
                                             onChange={(e) => setNombre(e.target.value)}
+                                            isInvalid={validated && !nombre.trim()}
                                         />
-                                    </FormGroup>
+                                        <FormControl.Feedback type="invalid">El nombre es obligatorio</FormControl.Feedback>
+                                    </Form.Group>
 
-                                    <FormGroup className="mb-3">
-                                        <RequiredLabel htmlFor="txtEmail">Email</RequiredLabel>
-                                        <FormControl
-                                            id="txtEmail"
+                                    {/* Email */}
+                                    <Form.Group className="mb-3" controlId="txtEmail">
+                                        <RequiredLabel>Email</RequiredLabel>
+                                        <Form.Control
                                             type="email"
-                                            required
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
+                                            isInvalid={
+                                                validated &&
+                                                (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+                                            }
                                         />
-                                    </FormGroup>
+                                        <FormControl.Feedback type="invalid">El email es obligatorio</FormControl.Feedback>
+                                    </Form.Group>
 
-                                    <FormGroup className="mb-3">
-                                        <RequiredLabel htmlFor="txtWishlist">Wishlist</RequiredLabel>
-                                        <FormControl
+                                    {/* Wishlist */}
+                                    <Form.Group className="mb-3" controlId="txtWishlist">
+                                        <RequiredLabel>Wishlist</RequiredLabel>
+                                        <Form.Control
                                             as="textarea"
                                             rows={3}
-                                            id="txtWishlist"
                                             value={wishlist}
-                                            placeholder="Ejemplo: Chocolates, libros, taza personalizada..."
                                             onChange={(e) => setWishlist(e.target.value)}
+                                            isInvalid={validated && !wishlist.trim()}
+                                            placeholder="Ejemplo: Chocolates, libros, taza personalizada..."
                                         />
-                                    </FormGroup>
+                                        <FormControl.Feedback type="invalid">El wishlist es obligatorio</FormControl.Feedback>
+                                    </Form.Group>
 
                                     <div className="mt-3">
                                         <Button variant="success" type="submit">
@@ -96,6 +103,7 @@ const FormParticipante = () => {
                                             variant="secondary"
                                             className="ms-2"
                                             onClick={onCancelar}
+                                            type="button"
                                         >
                                             Cancelar
                                         </Button>

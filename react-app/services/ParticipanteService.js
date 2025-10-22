@@ -3,93 +3,75 @@ import { getAccessToken } from "../utils/TokenUtilities";
 
 const API_URL = "http://localhost:3000/participantes";
 
-// Obtener todos los participantes de un sorteo
-const getParticipantesBySorteo = (idSorteo) => {
-    return new Promise((resolve, reject) => {
-        axios.get(`${API_URL}/sorteo/${idSorteo}`, {
+// ✅ Obtener todos los participantes de un sorteo
+const getParticipantesBySorteo = async (idSorteo) => {
+    try {
+        const res = await axios.get(`${API_URL}/sorteo/${idSorteo}`, {
+            headers: { Authorization: `Bearer ${getAccessToken()}` },
+        });
+        return res.data;
+    } catch (error) {
+        console.error("Error al obtener participantes:", error.response?.data || error);
+        throw error;
+    }
+};
+
+// ✅ Crear un participante
+const crearParticipante = async (participante) => {
+    try {
+        const res = await axios.post(API_URL, participante, {
             headers: {
-                Authorization: `Bearer ${getAccessToken()}`
-            }
-        })
-        .then((response) => {
-            resolve(response.data);
-        })
-        .catch((error) => {
-            console.error("Error al obtener participantes:", error);
-            reject(error);
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${getAccessToken()}`,
+            },
         });
-    });
+        return res.data;
+    } catch (error) {
+        console.error("Error al crear participante:", error.response?.data || error);
+        throw error;
+    }
 };
 
-// Crear un participante
-const crearParticipante = (participante) => {
-    return new Promise((resolve, reject) => {
-        axios.post(API_URL, participante, {
-            headers: {
-                Authorization: `Bearer ${getAccessToken()}`
-            }
-        })
-        .then((response) => {
-            const nuevoParticipante = response.data;
-            resolve(nuevoParticipante);
-        })
-        .catch((error) => {
-            console.error("Error al crear participante:", error);
-            reject(error);
+// ✅ Eliminar participante
+const eliminarParticipante = async (id) => {
+    try {
+        await axios.delete(`${API_URL}/${id}`, {
+            headers: { Authorization: `Bearer ${getAccessToken()}` },
         });
-    });
+    } catch (error) {
+        console.error("Error al eliminar participante:", error.response?.data || error);
+        throw error;
+    }
 };
 
-// Eliminar participante
-const eliminarParticipante = (id) => {
-    return new Promise((resolve, reject) => {
-        axios.delete(`${API_URL}/${id}`, {
-            headers: {
-                Authorization: `Bearer ${getAccessToken()}`
-            }
-        })
-        .then(() => {
-            resolve();
-        })
-        .catch((error) => {
-            console.error("Error al eliminar participante:", error);
-            reject(error);
-        });
-    });
+// ✅ Obtener participante por hash (acceso público)
+const getParticipantePorHash = async (hash) => {
+    try {
+        const res = await axios.get(`${API_URL}/${hash}`);
+        return res.data;
+    } catch (error) {
+        console.error("Error al obtener participante por hash:", error.response?.data || error);
+        throw error;
+    }
 };
 
-// Obtener participante por hash (acceso público)
-const getParticipantePorHash = (hash) => {
-    return new Promise((resolve, reject) => {
-        axios.get(`${API_URL}/${hash}`)
-        .then((response) => {
-            resolve(response.data);
-        })
-        .catch((error) => {
-            console.error("Error al obtener participante por hash:", error);
-            reject(error);
-        });
-    });
+// ✅ Actualizar wishlist de un participante
+const actualizarWishlist = async (hash, wishlist) => {
+    try {
+        const res = await axios.patch(`${API_URL}/${hash}/wishlist`, { wishlist });
+        return res.data;
+    } catch (error) {
+        console.error("Error al actualizar wishlist:", error.response?.data || error);
+        throw error;
+    }
 };
 
-// Actualizar wishlist de un participante (acceso público)
-const actualizarWishlist = (hash, wishlist) => {
-    return new Promise((resolve, reject) => {
-        axios.patch(`${API_URL}/${hash}/wishlist`, { wishlist })
-        .then((response) => {
-            resolve(response.data);
-        })
-        .catch((error) => {
-            console.error("Error al actualizar wishlist:", error);
-            reject(error);
-        });
-    });
-};
+
 
 export {
     getParticipantesBySorteo,
     crearParticipante,
     eliminarParticipante,
     getParticipantePorHash,
-    actualizarWishlist
+    actualizarWishlist,
 };
