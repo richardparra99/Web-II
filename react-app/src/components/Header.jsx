@@ -1,5 +1,5 @@
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { getAccessToken } from "../../utils/TokenUtilities";
 import useAuthentication from "../../hooks/userAuthToken";
 
@@ -28,20 +28,6 @@ const Header = () => {
                                 <Link className="dropdown-item" to="/">Listas de sorteos</Link>
                                 <Link className="dropdown-item" to="/sorteos/create">
                                     Crear Sorteo
-                                </Link>
-                            </NavDropdown>
-                            <NavDropdown title="Participantes" id="dropdown-participantes">
-                                <Link
-                                    className="dropdown-item"
-                                    to="/sorteos/1/participantes"
-                                >
-                                    Lista de participantes
-                                </Link>
-                                <Link
-                                    className="dropdown-item"
-                                    to="/sorteos/1/participantes/create"
-                                >
-                                    Crear participante
                                 </Link>
                             </NavDropdown>
                             <NavDropdown title={userEmail} id="logout-dropdown">

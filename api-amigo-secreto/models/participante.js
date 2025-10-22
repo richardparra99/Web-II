@@ -1,36 +1,36 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = function (sequelize) {
-  const Participante = sequelize.define("Participante", {
+  const Participante = sequelize.define("participante", {
     nombre: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: true,
     },
     wishlist: {
       type: DataTypes.TEXT,
-      allowNull: true
+      allowNull: true,
     },
     hashAcceso: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      unique: true,
     },
     identificado: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false
+      defaultValue: false,
     },
     asignadoA: {
       type: DataTypes.INTEGER, // id del participante al que le toca dar el regalo
-      allowNull: true
+      allowNull: true,
     },
     idSorteo: {
       type: DataTypes.INTEGER,
-      allowNull: false
-    }
+      allowNull: false,
+    },
   });
   return Participante;
 };

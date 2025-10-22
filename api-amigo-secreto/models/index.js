@@ -22,6 +22,9 @@ sorteo.belongsTo(usuario, { foreignKey: "idUsuario", as: "usuario"});
 sorteo.hasMany(participante, {foreignKey: "idSorteo", as: "participantes"});
 participante.belongsTo(sorteo, {foreignKey: "idSorteo", as: "sorteo"});
 
+participante.belongsTo(participante, {as: "asignado",foreignKey: "asignadoA"});
+
+
 // usuario.hasMany(album, {foreignKey: "userId", as: "albumes"});
 // album.belongsTo(usuario, {foreignKey: "userId", as: "user"});
 

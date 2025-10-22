@@ -13,6 +13,7 @@ module.exports = app => {
     router.get("/sorteo/:idSorteo", validateUser, controller.getParticipantesPorSorteo);
     router.get("/:hash", controller.getParticipantePorHash);
     router.patch("/:hash/wishlist", isJsonRequestValid, validateJson(wishlistSchema), controller.actualizarWishlist);
+    router.delete("/:id", validateUser, controller.eliminarParticipante);
 
     app.use('/participantes', router);
 }

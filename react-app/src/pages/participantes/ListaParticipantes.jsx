@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "../../components/Header";
 import useAuthentication from "../../../hooks/userAuthToken";
 import { getParticipantesBySorteo, eliminarParticipante } from "../../../services/ParticipanteService";
@@ -20,6 +20,7 @@ const ListaParticipantes = () => {
 
     useEffect(() => {
         fetchParticipantes();
+        // eslint-disable-next-line
     }, [idSorteo]);
 
     const onClickEliminar = (id) => () => {
@@ -29,17 +30,29 @@ const ListaParticipantes = () => {
             .catch(() => alert("Error al eliminar participante"));
     };
 
+    // 🔹 Nuevo participante (va a /sorteos/:idSorteo/participantes/create)
+    const onClickNuevo = () => {
+        navigate(`/sorteos/${idSorteo}/participantes/create`);
+    };
+
     return (
         <>
             <Header />
             <Container>
                 <Row className="mt-3">
                     <Col>
-                        <Row>
-                            <Col><h1>Participantes del sorteo</h1></Col>
+                        <Row className="mb-3 align-items-center">
+                            <Col>
+                                <h2>Participantes del sorteo</h2>
+                            </Col>
+                            <Col className="text-end">
+                                <Button variant="success" onClick={onClickNuevo}>
+                                    Nuevo Participante
+                                </Button>
+                            </Col>
                         </Row>
 
-                        <Table striped bordered hover>
+                        <Table striped bordered hover responsive>
                             <thead>
                                 <tr>
                                     <th>Nombre</th>
@@ -49,34 +62,38 @@ const ListaParticipantes = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {participantes.map((p) => (
-                                    <tr key={p.id}>
-                                        <td>{p.nombre}</td>
-                                        <td>{p.email}</td>
-                                        <td>{p.wishlist || "-"}</td>
-                                        <td>
-                                            <Button
-                                                variant="info"
-                                                size="sm"
-                                                className="me-2"
-                                                onClick={() =>
-                                                    navigate(`/sorteos/${idSorteo}/participantes/${p.id}/edit`)
-                                                }
-                                            >
-                                                Editar
-                                            </Button>
-                                            <Button
-                                                variant="danger"
-                                                size="sm"
-                                                onClick={onClickEliminar(p.id)}
-                                            >
-                                                Eliminar
-                                            </Button>
+                                {participantes.length > 0 ? (
+                                    participantes.map((p) => (
+                                        <tr key={p.id}>
+                                            <td>{p.nombre}</td>
+                                            <td>{p.email}</td>
+                                            <td>{p.wishlist || "—"}</td>
+                                            <td>
+                                                <Button
+                                                    variant="danger"
+                                                    size="sm"
+                                                    onClick={onClickEliminar(p.id)}
+                                                >
+                                                    Eliminar
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={4} className="text-center text-muted">
+                                            No hay participantes registrados
                                         </td>
                                     </tr>
-                                ))}
+                                )}
                             </tbody>
                         </Table>
+
+                        <div className="mt-3">
+                            <Button variant="secondary" onClick={() => navigate("/")}>
+                                ← Volver a sorteos
+                            </Button>
+                        </div>
                     </Col>
                 </Row>
             </Container>
