@@ -10,6 +10,7 @@ import ListaSorteos from './pages/sorteos/ListaSorteos.jsx'
 import FormSorteo from './pages/sorteos/FormSorteos.jsx'
 import ListaParticipantes from './pages/participantes/ListaParticipantes.jsx'
 import FormParticipante from './pages/participantes/FormParticipantes.jsx'
+import VerAmigoSecreto from './pages/participantes/VerAmigoSecreto.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -20,6 +21,8 @@ createRoot(document.getElementById('root')).render(
       <Route path="/sorteos/:id/edit" element={<FormSorteo/>}></Route>
       <Route path="/sorteos/:idSorteo/participantes" element={<ListaParticipantes/>} />
       <Route path="/sorteos/:idSorteo/participantes/create" element={<FormParticipante />} />
+      <Route path="/participantes/:hash" element={<VerAmigoSecreto />} />
+
       {/* <Route path="/personas/create" element={<FormPersona/>}></Route>
       <Route path="/personas/:id/edit" element={<FormPersona/>}></Route> */}
       <Route path="/login" element={<FormLogin/>}></Route>
