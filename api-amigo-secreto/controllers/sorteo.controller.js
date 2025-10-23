@@ -101,21 +101,25 @@ exports.sortearSorteo = async (req, res) => {
         if (!sorteo)
             return res.status(404).json({ error: "Sorteo no encontrado" });
 
-        if (sorteo.participantes.length < 2)
+        if (sorteo.iniciado)
+            return res.status(400).json({ error: "El sorteo ya fue iniciado" });
+
+        const participantes = sorteo.participantes;
+
+        if (participantes.length < 2)
             return res.status(400).json({
                 error: "Debe haber al menos dos participantes para sortear",
             });
 
-        // Mezclar aleatoriamente los índices
-        const participantes = sorteo.participantes;
-        const indices = [...participantes.keys()];
-        const mezclados = indices.sort(() => Math.random() - 0.5);
+        // Mezclar los participantes aleatoriamente
+        const mezclados = [...participantes].sort(() => Math.random() - 0.5);
 
-        // Asignar a cada uno su “amigo secreto”
-        for (let i = 0; i < participantes.length; i++) {
-            const siguiente = mezclados[(i + 1) % participantes.length];
-            participantes[i].asignadoA = participantes[siguiente].id;
-            await participantes[i].save();
+        // Asignar el siguiente participante como el “amigo secreto”
+        for (let i = 0; i < mezclados.length; i++) {
+            const actual = mezclados[i];
+            const siguiente = mezclados[(i + 1) % mezclados.length];
+            actual.asignadoA = siguiente.id;
+            await actual.save();
         }
 
         sorteo.iniciado = true;
@@ -124,10 +128,45 @@ exports.sortearSorteo = async (req, res) => {
         res.json({
             message: "Sorteo realizado exitosamente",
             sorteoId: sorteo.id,
-            linkAcceso: `/sorteos/${sorteo.hashAcceso}`,
+            totalParticipantes: participantes.length,
         });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Error al sortear los participantes" });
+    }
+};
+
+exports.getResultadosSorteo = async (req, res) => {
+    try {
+        const sorteo = await db.sorteo.findByPk(req.params.id, {
+            include: [
+                {
+                    model: db.participante,
+                    as: "participantes",
+                    attributes: ["id", "nombre", "email", "wishlist", "asignadoA"]
+                }
+            ],
+        });
+
+        if (!sorteo)
+            return res.status(404).json({ error: "Sorteo no encontrado" });
+
+        // Mapea los resultados legibles
+        const resultados = sorteo.participantes.map(p => {
+            const amigo = sorteo.participantes.find(a => a.id === p.asignadoA);
+            return {
+                nombre: p.nombre,
+                regaloPara: amigo ? amigo.nombre : "—",
+                wishlist: amigo ? amigo.wishlist : "—"
+            };
+        });
+
+        res.json({
+            sorteo: sorteo.nombre,
+            resultados
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error al obtener resultados del sorteo" });
     }
 };

@@ -59,25 +59,51 @@ exports.getParticipantesPorSorteo = async (req, res) => {
 
 exports.getParticipantePorHash = async (req, res) => {
     try {
+        // 🔹 Buscamos al participante por su link secreto
         const participante = await db.participante.findOne({
             where: { hashAcceso: req.params.hash },
-            include: [{ model: db.sorteo, as: "sorteo" }],
+            include: [
+                {
+                    model: db.sorteo,
+                    as: "sorteo",
+                    include: [{ model: db.participante, as: "participantes" }]
+                }
+            ],
         });
 
         if (!participante) {
             return res.status(404).json({ error: "Link inválido o expirado" });
         }
 
-        participante.identificado = true;
-        await participante.save();
+        // 🔹 Marcamos que ya accedió
+        if (!participante.identificado) {
+            participante.identificado = true;
+            await participante.save();
+        }
 
-        res.json({
-            participante,
-            message: "Acceso válido",
-        });
+        // 🔹 Buscamos al amigo secreto
+        const amigo = participante.sorteo.participantes.find(
+            (p) => p.id === participante.asignadoA
+        );
+
+        // 🔹 Construimos la respuesta final
+        const respuesta = {
+            nombre: participante.nombre,
+            email: participante.email,
+            wishlistPropia: participante.wishlist || "",
+            sorteo: participante.sorteo.nombre,
+            amigoSecreto: amigo
+                ? {
+                    nombre: amigo.nombre,
+                    wishlist: amigo.wishlist || "",
+                }
+                : null,
+        };
+
+        res.json(respuesta);
     } catch (error) {
-        console.error("Error al validar acceso:", error);
-        res.status(500).json({ error: "Error al validar el acceso del participante" });
+        console.error("Error al validar acceso del participante:", error);
+        res.status(500).json({ error: "Error al obtener datos del participante" });
     }
 };
 

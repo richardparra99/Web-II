@@ -15,7 +15,9 @@ module.exports = app => {
     router.patch("/:id", validateUser, isJsonRequestValid, validateJson(sorteoOptionalSchema), getObjectOr404(db.sorteo), controller.actualizarSorteoPatch);
     router.delete("/:id", validateUser, getObjectOr404(db.sorteo), controller.eliminarSorteos);
 
-    router.post("/:id/sortear", validateUser, getObjectOr404(db.sorteo), controller.sortearSorteo);
+    router.patch("/:id/sortear", validateUser, getObjectOr404(db.sorteo), controller.sortearSorteo);
+
+    router.get("/:id/resultados", validateUser, controller.getResultadosSorteo);
 
     app.use('/sorteos', router);
 }

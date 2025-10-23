@@ -101,7 +101,7 @@ const eliminarSorteo = (id) => {
 
 const sortearNombres = (id) => {
     return new Promise((resolve, reject) => {
-        axios.post(`${API_URL}/${id}/sortear`, {}, {
+        axios.patch(`${API_URL}/${id}/sortear`, {}, {
             headers: {
                 Authorization: `Bearer ${getAccessToken()}`
             }

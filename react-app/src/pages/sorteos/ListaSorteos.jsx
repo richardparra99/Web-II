@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // ✅ agregado useNavigate
 import Header from "../../components/Header";
 import useAuthentication from "../../../hooks/userAuthToken";
 import { getAllSorteos, eliminarSorteo, sortearNombres } from "../../../services/SorteoService";
 import moment from "moment";
 
 const ListaSorteos = () => {
+    const navigate = useNavigate(); // ✅ agregado para redirecciones
     useAuthentication(true);
     const [sorteos, setSorteos] = useState([]);
 
@@ -45,6 +46,15 @@ const ListaSorteos = () => {
             .catch(() => alert("Error al realizar el sorteo"));
     };
 
+    // 🔹 Validar edición
+    const onClickEditar = (sorteo) => {
+        if (sorteo.iniciado) {
+            alert("⚠️ No se puede editar un sorteo que ya fue iniciado.");
+            return;
+        }
+        navigate(`/sorteos/${sorteo.id}/edit`);
+    };
+
     return (
         <>
             <Header />
@@ -74,12 +84,14 @@ const ListaSorteos = () => {
                                             <td>{moment(s.fecha).format("DD/MM/YYYY")}</td>
                                             <td>{s.iniciado ? "Iniciado" : "Pendiente"}</td>
                                             <td>
-                                                <Link
-                                                    to={`/sorteos/${s.id}/edit`}
-                                                    className="btn btn-info btn-sm me-2"
+                                                <Button
+                                                    variant="info"
+                                                    size="sm"
+                                                    className="me-2"
+                                                    onClick={() => onClickEditar(s)}
                                                 >
                                                     Editar
-                                                </Link>
+                                                </Button>
                                                 <Link
                                                     to={`/sorteos/${s.id}/participantes`}
                                                     className="btn btn-primary btn-sm me-2"
@@ -91,6 +103,7 @@ const ListaSorteos = () => {
                                                     size="sm"
                                                     className="me-2"
                                                     onClick={() => onClickSortear(s.id)}
+                                                    disabled={s.iniciado} // ✅ deshabilitado si ya fue sorteado
                                                 >
                                                     Sortear
                                                 </Button>
@@ -98,6 +111,7 @@ const ListaSorteos = () => {
                                                     variant="danger"
                                                     size="sm"
                                                     onClick={() => onClickEliminar(s.id)}
+                                                    disabled={s.iniciado} // ✅ deshabilitado si ya fue sorteado
                                                 >
                                                     Eliminar
                                                 </Button>
