@@ -1,23 +1,23 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Container, Row, Table } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom"; // ✅ agregado useNavigate
+import { Button, Col, Container, Row, Table, Modal, FormControl } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import useAuthentication from "../../../hooks/userAuthToken";
 import { getAllSorteos, eliminarSorteo, sortearNombres } from "../../../services/SorteoService";
 import moment from "moment";
 
 const ListaSorteos = () => {
-    const navigate = useNavigate(); // ✅ agregado para redirecciones
+    const navigate = useNavigate();
     useAuthentication(true);
+
     const [sorteos, setSorteos] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [linkPublico, setLinkPublico] = useState("");
 
     useEffect(() => {
-        const fetchSorteos = () => {
-            getAllSorteos()
-                .then((res) => setSorteos(res))
-                .catch(() => alert("Error al obtener sorteos"));
-        };
-        fetchSorteos();
+        getAllSorteos()
+            .then((res) => setSorteos(res))
+            .catch(() => alert("Error al obtener sorteos"));
     }, []);
 
     // 🔹 Eliminar un sorteo
@@ -34,14 +34,16 @@ const ListaSorteos = () => {
     // 🔹 Sortear nombres
     const onClickSortear = (id) => {
         if (!window.confirm("¿Sortear los nombres? Esto no se puede revertir.")) return;
+
         sortearNombres(id)
-            .then(() => {
-                alert("Sorteo realizado correctamente");
+            .then((res) => {
+                alert("🎉 Sorteo realizado correctamente");
                 setSorteos((prev) =>
-                    prev.map((s) =>
-                        s.id === id ? { ...s, iniciado: true } : s
-                    )
+                    prev.map((s) => (s.id === id ? { ...s, iniciado: true } : s))
                 );
+                const base = window.location.origin;
+                setLinkPublico(`${base}${res.linkAcceso}`);
+                setShowModal(true);
             })
             .catch(() => alert("Error al realizar el sorteo"));
     };
@@ -49,10 +51,27 @@ const ListaSorteos = () => {
     // 🔹 Validar edición
     const onClickEditar = (sorteo) => {
         if (sorteo.iniciado) {
-            alert("⚠️ No se puede editar un sorteo que ya fue iniciado.");
+            alert("No se puede editar un sorteo que ya fue iniciado.");
             return;
         }
         navigate(`/sorteos/${sorteo.id}/edit`);
+    };
+
+    // 🔹 Abrir modal de compartir (sin volver a sortear)
+    const onClickCompartir = (sorteo) => {
+        if (!sorteo.iniciado) {
+            alert("Aún no puedes compartir este sorteo porque no ha sido iniciado.");
+            return;
+        }
+        const base = window.location.origin;
+        setLinkPublico(`${base}/sorteo/${sorteo.hashAcceso}`);
+        setShowModal(true);
+    };
+
+    // 🔹 Copiar link
+    const copiarLink = () => {
+        navigator.clipboard.writeText(linkPublico);
+        alert("Enlace copiado al portapapeles");
     };
 
     return (
@@ -103,17 +122,26 @@ const ListaSorteos = () => {
                                                     size="sm"
                                                     className="me-2"
                                                     onClick={() => onClickSortear(s.id)}
-                                                    disabled={s.iniciado} // ✅ deshabilitado si ya fue sorteado
+                                                    disabled={s.iniciado}
                                                 >
                                                     Sortear
                                                 </Button>
                                                 <Button
                                                     variant="danger"
                                                     size="sm"
+                                                    className="me-2"
                                                     onClick={() => onClickEliminar(s.id)}
-                                                    disabled={s.iniciado} // ✅ deshabilitado si ya fue sorteado
+                                                    disabled={s.iniciado}
                                                 >
                                                     Eliminar
+                                                </Button>
+                                                <Button
+                                                    variant="success"
+                                                    size="sm"
+                                                    onClick={() => onClickCompartir(s)}
+                                                    disabled={!s.iniciado}
+                                                >
+                                                    Compartir
                                                 </Button>
                                             </td>
                                         </tr>
@@ -130,6 +158,31 @@ const ListaSorteos = () => {
                     </Col>
                 </Row>
             </Container>
+
+            {/* ✅ Modal de compartir */}
+            <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Compartir enlace del sorteo</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>Envía este enlace a los participantes para que vean a quién les tocó:</p>
+                    <FormControl
+                        type="text"
+                        value={linkPublico}
+                        readOnly
+                        onClick={(e) => e.target.select()}
+                        className="mb-3"
+                    />
+                    <Button variant="outline-success" onClick={copiarLink}>
+                        Copiar enlace
+                    </Button>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>
+                        Cerrar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </>
     );
 };

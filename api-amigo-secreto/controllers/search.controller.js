@@ -1,4 +1,3 @@
-// backend/controllers/search.controller.js
 const { Op, fn, col, where } = require("sequelize");
 const db = require("../models");
 

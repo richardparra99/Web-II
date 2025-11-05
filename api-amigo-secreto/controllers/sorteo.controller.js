@@ -111,10 +111,10 @@ exports.sortearSorteo = async (req, res) => {
                 error: "Debe haber al menos dos participantes para sortear",
             });
 
-        // Mezclar los participantes aleatoriamente
+        // 🔹 Mezclar los participantes aleatoriamente
         const mezclados = [...participantes].sort(() => Math.random() - 0.5);
 
-        // Asignar el siguiente participante como el “amigo secreto”
+        // 🔹 Asignar el siguiente participante como el “amigo secreto”
         for (let i = 0; i < mezclados.length; i++) {
             const actual = mezclados[i];
             const siguiente = mezclados[(i + 1) % mezclados.length];
@@ -129,12 +129,14 @@ exports.sortearSorteo = async (req, res) => {
             message: "Sorteo realizado exitosamente",
             sorteoId: sorteo.id,
             totalParticipantes: participantes.length,
+            linkAcceso: `/sorteo/${sorteo.hashAcceso}`, // 👈 agregado
         });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Error al sortear los participantes" });
     }
 };
+
 
 exports.getResultadosSorteo = async (req, res) => {
     try {
@@ -168,5 +170,30 @@ exports.getResultadosSorteo = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Error al obtener resultados del sorteo" });
+    }
+};
+
+
+exports.getSorteoPorHash = async (req, res) => {
+    try {
+        const sorteo = await db.sorteo.findOne({
+            where: { hashAcceso: req.params.hash },
+            include: [{ model: db.participante, as: "participantes" }],
+        });
+
+        if (!sorteo)
+            return res.status(404).json({ error: "Sorteo no encontrado o inválido" });
+
+        if (!sorteo.iniciado)
+            return res.status(400).json({ error: "El sorteo aún no ha sido iniciado" });
+
+        res.json({
+            id: sorteo.id,
+            nombre: sorteo.nombre,
+            participantes: sorteo.participantes,
+        });
+    } catch (error) {
+        console.error("Error al obtener sorteo por hash:", error);
+        res.status(500).json({ error: "Error al obtener sorteo" });
     }
 };

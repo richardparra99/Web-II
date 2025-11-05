@@ -15,5 +15,7 @@ module.exports = app => {
     router.patch("/:hash/wishlist", isJsonRequestValid, validateJson(wishlistSchema), controller.actualizarWishlist);
     router.delete("/:id", validateUser, controller.eliminarParticipante);
 
+    router.post("/seleccionar", controller.seleccionarParticipante);
+
     app.use('/participantes', router);
 }

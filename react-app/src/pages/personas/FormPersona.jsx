@@ -32,6 +32,7 @@ const FormPersona = () => {
                 setFecha(moment(persona.fechaNacmiento).format("YYYY-MM-DD" || ""));
             })
             .catch((error) => {
+                console.log(error);
                 alert("Error al cargar a la persona");
                 navigate("/");
             });
