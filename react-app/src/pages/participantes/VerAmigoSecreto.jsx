@@ -4,16 +4,20 @@ import { Container, Row, Col, Card, Spinner, Alert } from "react-bootstrap";
 import { getParticipantePorHash } from "../../../services/ParticipanteService";
 
 const VerAmigoSecreto = () => {
-    const { hash } = useParams(); // viene de /participantes/:hash
+    const { hash } = useParams();
     const [participante, setParticipante] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    // 👇 separa hash e id
+    const [sorteoHash, participanteId] = hash.split("-");
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await getParticipantePorHash(hash);
-                setParticipante(data);
+                const data = await getParticipantePorHash(sorteoHash);
+                const encontrado = data.participantes?.find((p) => p.id === parseInt(participanteId));
+                setParticipante(encontrado);
             } catch (error) {
                 console.log(error);
                 setError("El enlace no es válido o el sorteo no existe.");
@@ -22,6 +26,7 @@ const VerAmigoSecreto = () => {
             }
         };
         fetchData();
+        // eslint-disable-next-line
     }, [hash]);
 
     if (loading) {

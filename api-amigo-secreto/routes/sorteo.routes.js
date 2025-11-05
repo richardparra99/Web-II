@@ -19,5 +19,7 @@ module.exports = app => {
 
     router.get("/:id/resultados", validateUser, controller.getResultadosSorteo);
 
+    router.get("/hash/:hash", controller.getSorteoPorHash);
+
     app.use('/sorteos', router);
 }

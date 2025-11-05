@@ -5,7 +5,7 @@ exports.crearParticipante = async (req, res) => {
     const { nombre, email, idSorteo, wishlist } = req.body;
 
     try {
-        // ✅ Verificamos que el sorteo exista y sea del usuario logueado
+        //Verificamos que el sorteo exista y sea del usuario logueado
         const sorteo = await db.sorteo.findOne({
             where: {
                 id: idSorteo,
@@ -23,10 +23,10 @@ exports.crearParticipante = async (req, res) => {
             });
         }
 
-        // ✅ Generamos hash único
+        //Generamos hash único
         const hashAcceso = generateAuthToken(nombre + email);
 
-        // ✅ Creamos el participante
+        //Creamos el participante
         const participante = await db.participante.create({
             nombre,
             email,
@@ -59,7 +59,7 @@ exports.getParticipantesPorSorteo = async (req, res) => {
 
 exports.getParticipantePorHash = async (req, res) => {
     try {
-        // 🔹 Buscamos al participante por su link secreto
+        //Buscamos al participante por su link secreto
         const participante = await db.participante.findOne({
             where: { hashAcceso: req.params.hash },
             include: [
@@ -75,18 +75,18 @@ exports.getParticipantePorHash = async (req, res) => {
             return res.status(404).json({ error: "Link inválido o expirado" });
         }
 
-        // 🔹 Marcamos que ya accedió
+        //Marcamos que ya accedió
         if (!participante.identificado) {
             participante.identificado = true;
             await participante.save();
         }
 
-        // 🔹 Buscamos al amigo secreto
+        //Buscamos al amigo secreto
         const amigo = participante.sorteo.participantes.find(
             (p) => p.id === participante.asignadoA
         );
 
-        // 🔹 Construimos la respuesta final
+        //Construimos la respuesta final
         const respuesta = {
             nombre: participante.nombre,
             email: participante.email,
@@ -133,26 +133,21 @@ exports.actualizarWishlist = async (req, res) => {
 };
 
 
-// ✅ Eliminar participante por ID
 exports.eliminarParticipante = async (req, res) => {
     try {
-        // Buscamos el participante
         const participante = await db.participante.findOne({
             where: { id: req.params.id },
             include: [{ model: db.sorteo, as: "sorteo" }]
         });
 
-        // Verificamos existencia
         if (!participante) {
             return res.status(404).json({ error: "Participante no encontrado" });
         }
 
-        // Verificamos que el sorteo pertenezca al usuario autenticado
         if (participante.sorteo.idUsuario !== req.user.id) {
             return res.status(403).json({ error: "No autorizado para eliminar este participante" });
         }
 
-        // No permitir eliminar si el sorteo ya fue iniciado
         if (participante.sorteo.iniciado) {
             return res.status(400).json({
                 error: "No se pueden eliminar participantes de un sorteo ya iniciado"
@@ -165,5 +160,36 @@ exports.eliminarParticipante = async (req, res) => {
     } catch (error) {
         console.error("Error al eliminar participante:", error);
         res.status(500).json({ error: "Error al eliminar participante" });
+    }
+};
+
+
+exports.seleccionarParticipante = async (req, res) => {
+    const { idParticipante } = req.body;
+    try {
+        const participante = await db.participante.findByPk(idParticipante, {
+            include: [{ model: db.participante, as: "asignado", foreignKey: "asignadoA" }]
+        });
+
+        if (!participante)
+            return res.status(404).json({ error: "Participante no encontrado" });
+
+        if (participante.identificado)
+            return res.status(400).json({ error: "Este participante ya fue identificado" });
+
+        participante.identificado = true;
+        await participante.save();
+
+        const amigo = await db.participante.findByPk(participante.asignadoA);
+
+        res.json({
+            message: "Participante seleccionado correctamente",
+            tuNombre: participante.nombre,
+            teToco: amigo ? amigo.nombre : "Sin asignación",
+            wishlistAmigo: amigo ? amigo.wishlist : null
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error al seleccionar participante" });
     }
 };

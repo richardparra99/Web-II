@@ -116,11 +116,23 @@ const sortearNombres = (id) => {
     });
 };
 
+const getSorteoPorHash = (hash) => {
+    return new Promise((resolve, reject) => {
+        axios.get(`${API_URL}/hash/${hash}`)
+            .then((response) => resolve(response.data))
+            .catch((error) => {
+                console.error("Error al obtener sorteo por hash:", error);
+                reject(error);
+            });
+    });
+};
+
 export {
     getAllSorteos,
     getSorteoById,
     crearSorteo,
     actualizarSorteo,
     eliminarSorteo,
-    sortearNombres
+    sortearNombres,
+    getSorteoPorHash
 };

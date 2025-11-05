@@ -66,6 +66,16 @@ const actualizarWishlist = async (hash, wishlist) => {
     }
 };
 
+const seleccionarParticipante = async (idParticipante) => {
+    try {
+        const res = await axios.post(`${API_URL}/seleccionar`, { idParticipante });
+        return res.data;
+    } catch (error) {
+        console.error("Error al seleccionar participante:", error.response?.data || error);
+        throw error;
+    }
+};
+
 
 
 export {
@@ -74,4 +84,5 @@ export {
     eliminarParticipante,
     getParticipantePorHash,
     actualizarWishlist,
+    seleccionarParticipante
 };
