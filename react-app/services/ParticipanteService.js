@@ -3,7 +3,6 @@ import { getAccessToken } from "../utils/TokenUtilities";
 
 const API_URL = "http://localhost:3000/participantes";
 
-// ✅ Obtener todos los participantes de un sorteo
 const getParticipantesBySorteo = async (idSorteo) => {
     try {
         const res = await axios.get(`${API_URL}/sorteo/${idSorteo}`, {
@@ -16,7 +15,7 @@ const getParticipantesBySorteo = async (idSorteo) => {
     }
 };
 
-// ✅ Crear un participante
+
 const crearParticipante = async (participante) => {
     try {
         const res = await axios.post(API_URL, participante, {
@@ -32,7 +31,7 @@ const crearParticipante = async (participante) => {
     }
 };
 
-// ✅ Eliminar participante
+
 const eliminarParticipante = async (id) => {
     try {
         await axios.delete(`${API_URL}/${id}`, {
@@ -44,7 +43,6 @@ const eliminarParticipante = async (id) => {
     }
 };
 
-// ✅ Obtener participante por hash (acceso público)
 const getParticipantePorHash = async (hash) => {
     try {
         const res = await axios.get(`${API_URL}/${hash}`);
@@ -55,8 +53,7 @@ const getParticipantePorHash = async (hash) => {
     }
 };
 
-// ✅ Actualizar wishlist de un participante
-const actualizarWishlist = async (hash, wishlist) => {
+/*const actualizarWishlist = async (hash, wishlist) => {
     try {
         const res = await axios.patch(`${API_URL}/${hash}/wishlist`, { wishlist });
         return res.data;
@@ -64,7 +61,7 @@ const actualizarWishlist = async (hash, wishlist) => {
         console.error("Error al actualizar wishlist:", error.response?.data || error);
         throw error;
     }
-};
+};*/
 
 const seleccionarParticipante = async (idParticipante) => {
     try {
@@ -83,6 +80,5 @@ export {
     crearParticipante,
     eliminarParticipante,
     getParticipantePorHash,
-    actualizarWishlist,
     seleccionarParticipante
 };

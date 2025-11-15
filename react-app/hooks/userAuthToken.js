@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom"
 import { getAccessToken, removeAccessToken, saveAccessToken } from "../utils/TokenUtilities";
-import axios from "axios";
 import { login } from "../services/AuthService";
 
 const useAuthentication = (checkOnLoad = false) => {
@@ -9,7 +8,7 @@ const useAuthentication = (checkOnLoad = false) => {
     const userEmail = localStorage.getItem("userEmail") || "";
     const validateLogin = () => {
         const token = getAccessToken();
-        if(!token){
+        if (!token) {
             navigate("/login");
             return;
         }
@@ -30,13 +29,14 @@ const useAuthentication = (checkOnLoad = false) => {
         navigate("/login");
     }
 
-    useEffect(() =>{
-        if(!checkOnLoad){
+    useEffect(() => {
+        if (!checkOnLoad) {
             return;
         }
         validateLogin();
+        // eslint-disable-next-line
     }, [navigate]);
-    return {doLogout, doLogin, userEmail}
+    return { doLogout, doLogin, userEmail }
 }
 
 export default useAuthentication;

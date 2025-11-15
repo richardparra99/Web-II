@@ -107,7 +107,7 @@ exports.getParticipantePorHash = async (req, res) => {
     }
 };
 
-exports.actualizarWishlist = async (req, res) => {
+/*exports.actualizarWishlist = async (req, res) => {
     const { wishlist } = req.body;
 
     try {
@@ -130,7 +130,7 @@ exports.actualizarWishlist = async (req, res) => {
         console.error("Error al actualizar wishlist:", error);
         res.status(500).json({ error: "Error al actualizar la wishlist" });
     }
-};
+};*/
 
 
 exports.eliminarParticipante = async (req, res) => {
