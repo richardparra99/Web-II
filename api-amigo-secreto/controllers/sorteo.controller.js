@@ -111,10 +111,8 @@ exports.sortearSorteo = async (req, res) => {
                 error: "Debe haber al menos dos participantes para sortear",
             });
 
-        // 🔹 Mezclar los participantes aleatoriamente
         const mezclados = [...participantes].sort(() => Math.random() - 0.5);
 
-        // 🔹 Asignar el siguiente participante como el “amigo secreto”
         for (let i = 0; i < mezclados.length; i++) {
             const actual = mezclados[i];
             const siguiente = mezclados[(i + 1) % mezclados.length];
@@ -129,7 +127,7 @@ exports.sortearSorteo = async (req, res) => {
             message: "Sorteo realizado exitosamente",
             sorteoId: sorteo.id,
             totalParticipantes: participantes.length,
-            linkAcceso: `/sorteo/${sorteo.hashAcceso}`, // 👈 agregado
+            linkAcceso: `/sorteo/${sorteo.hashAcceso}`,
         });
     } catch (error) {
         console.error(error);

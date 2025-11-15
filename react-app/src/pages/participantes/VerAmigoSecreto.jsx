@@ -9,7 +9,6 @@ const VerAmigoSecreto = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    // 👇 separa hash e id
     const [sorteoHash, participanteId] = hash.split("-");
 
     useEffect(() => {

@@ -90,7 +90,7 @@ const FormParticipante = () => {
                                             value={wishlist}
                                             onChange={(e) => setWishlist(e.target.value)}
                                             isInvalid={validated && !wishlist.trim()}
-                                            placeholder="Ejemplo: Chocolates, libros, taza personalizada..."
+                                            placeholder="agrega tu regalo"
                                         />
                                         <FormControl.Feedback type="invalid">El wishlist es obligatorio</FormControl.Feedback>
                                     </Form.Group>

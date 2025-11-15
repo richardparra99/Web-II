@@ -23,7 +23,6 @@ const FormSorteo = () => {
                 const found = sorteos.find((s) => s.id === parseInt(id));
                 if (found) {
                     setNombre(found.nombre);
-                    // 🔹 Usa moment.utc para evitar desfase al mostrar
                     setFecha(moment.utc(found.fecha).format("YYYY-MM-DD"));
                 }
             })
@@ -37,8 +36,8 @@ const FormSorteo = () => {
 
         const fechaUTC = new Date(fecha + "T00:00:00Z").toISOString();
 
-        const data = { 
-            nombre, 
+        const data = {
+            nombre,
             fecha: fechaUTC
         };
 
