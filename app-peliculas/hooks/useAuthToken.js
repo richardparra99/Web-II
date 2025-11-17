@@ -10,40 +10,45 @@ const useAuthToken = (checkOnLoad = false) => {
     const validateLogin = () => {
         const token = getAccessToken();
         if (!token) {
-            navigate("/login");
+            navigate("/auth/login");
         }
     };
 
-    const dologin = (loginData) => {
+    const doLogin = (loginData) => {
         login(loginData)
             .then((response) => {
-                const token = response.accessToken ?? response.token;
+                const token =
+                    response.access_token ||
+                    response.token ||
+                    response.accessToken;
+
+                if (!token) {
+                    alert("No se recibió token del servidor");
+                    return;
+                }
+
                 saveAccessToken(token);
                 localStorage.setItem("userEmail", loginData.email);
                 navigate("/");
             })
             .catch(() => {
-                alert("Error al iniciar sesion");
+                alert("Error al iniciar sesión");
             });
-    }
+    };
 
     const doLogout = () => {
         removeAccessToken();
         localStorage.removeItem("userEmail");
-        navigate("/login");
-    }
+        navigate("/auth/login");
+    };
 
     useEffect(() => {
-        if (!checkOnLoad) {
-            return;
-        }
-        validateLogin()
+        if (!checkOnLoad) return;
+        validateLogin();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [navigate]);
+    }, []);
 
-    return {
-        dologin, doLogout, userEmail
-    }
+    return { doLogin, doLogout, userEmail };
 };
 
 export default useAuthToken;

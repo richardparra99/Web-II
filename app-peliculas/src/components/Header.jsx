@@ -1,51 +1,54 @@
-import { Button, Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import useAuthToken from "../../hooks/useAuthToken";
 import { getAccessToken } from "../../utils/TokenUtilities";
 import { Link } from "react-router-dom";
 
 const Header = () => {
-    const { dologout, userEmail } = useAuthToken();
+    const { doLogout, userEmail } = useAuthToken();
     const token = getAccessToken();
 
     const onLogoutClick = () => {
-        dologout();
-    }
+        doLogout();
+    };
 
     return (
-        <Navbar>
+        <Navbar bg="danger" data-bs-theme="dark" expand="lg">
             <Container>
                 <Navbar.Brand as={Link} to="/">
-                    Catalogo de peliculas
+                    Fast - Movie
                 </Navbar.Brand>
+
                 <Navbar.Toggle aria-controls="navbarScroll" />
                 <Navbar.Collapse id="navbarScroll">
                     <Nav className="me-auto my-2 my-lg-0" navbarScroll>
-                        <Link className="nav-link" to="/">
-                            Home
-                        </Link>
+                        <Nav.Link as={Link} to="/">Home</Nav.Link>
                         {token && (
                             <>
-                                <Link className="nav-link" to="/mis-reviews">
+                                <Nav.Link as={Link} to="/peliculas/nueva">
+                                    Nueva película
+                                </Nav.Link>
+                                <Nav.Link as={Link} to="/mis-reviews">
                                     Mis Reviews
-                                </Link>
+                                </Nav.Link>
                             </>
                         )}
                     </Nav>
+
                     <Nav>
                         {token ? (
                             <NavDropdown title={userEmail || "Usuario"} id="user-dropdown">
-                                <Button className="dropdown-item" onClick={onLogoutClick}>
-                                    Cerrar sesion
-                                </Button>
+                                <NavDropdown.Item onClick={onLogoutClick}>
+                                    Cerrar sesión
+                                </NavDropdown.Item>
                             </NavDropdown>
                         ) : (
                             <>
-                                <Link className="nav-link" to="/login">
+                                <Nav.Link as={Link} to="/auth/login">
                                     Iniciar sesión
-                                </Link>
-                                <Link className="nav-link" to="/register">
+                                </Nav.Link>
+                                <Nav.Link as={Link} to="/auth/register">
                                     Registrarse
-                                </Link>
+                                </Nav.Link>
                             </>
                         )}
                     </Nav>
@@ -53,6 +56,6 @@ const Header = () => {
             </Container>
         </Navbar>
     );
-}
+};
 
 export default Header;
