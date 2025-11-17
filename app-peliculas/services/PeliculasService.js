@@ -35,7 +35,6 @@ export const crearPelicula = (formData) => {
         .post(`${API_URL}/peliculas`, formData, {
             headers: {
                 ...authHeader(),
-                "Content-Type": "multipart/form-data",
             },
         })
         .then((res) => res.data);
