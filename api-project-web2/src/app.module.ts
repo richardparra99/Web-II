@@ -5,6 +5,9 @@ import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
+import { EventsModule } from "./events/events.module";
+import { RegistrationsModule } from "./registrations/registrations.module";
+import { PaymentsModule } from "./payments/payments.module";
 
 @Module({
     imports: [
@@ -21,6 +24,9 @@ import { ConfigModule } from "@nestjs/config";
         }),
         AuthModule,
         UsersModule,
+        EventsModule,
+        RegistrationsModule,
+        PaymentsModule,
     ],
     controllers: [AppController],
     providers: [AppService],

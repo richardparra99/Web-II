@@ -5,13 +5,15 @@ import { UserRegisterDto } from "./dtos/user-register.dto";
 import { UserRegisterReponseDto } from "./dtos/register-reponse.dto";
 import type { AuthRequest } from "./auth-request.interface";
 import { JwtAuthGuard } from "./jwt.guard";
+import { Roles } from "./roles.decorator";
+import { UserRole } from "../users/user-role.enum";
 
 @Controller("auth")
 export class AuthController {
     constructor(private authService: AuthService) {}
 
     @Post("login")
-    login(@Body() body: UserLoginDto): Promise<any> {
+    login(@Body() body: UserLoginDto): Promise<{ accessToken: string }> {
         return this.authService.login(body);
     }
 
@@ -26,6 +28,16 @@ export class AuthController {
         return {
             userId: req.user.userId,
             email: req.user.email,
+        };
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Roles(UserRole.ADMIN)
+    @Get("admin-only")
+    adminOnly(@Req() req: AuthRequest) {
+        return {
+            message: "Solo los Admin pueden ver esto",
+            user: req.user,
         };
     }
 }
