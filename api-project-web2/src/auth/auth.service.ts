@@ -5,6 +5,7 @@ import { UserRegisterDto } from "./dtos/user-register.dto";
 import { UserRegisterReponseDto } from "./dtos/register-reponse.dto";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
+import { UserRole } from "../users/user-role.enum";
 
 @Injectable()
 export class AuthService {
@@ -22,7 +23,7 @@ export class AuthService {
         if (!hasheadPassword) {
             throw new UnauthorizedException();
         }
-        const payload = { sub: user.id, email: user.email };
+        const payload = { sub: user.id, email: user.email, roles: user.roles };
         const token = await this.jwtService.signAsync(payload);
         return { accessToken: token };
     }
@@ -37,6 +38,7 @@ export class AuthService {
             email: body.email.toLowerCase(),
             password: hashedPassword,
             fullName: body.fullName,
+            roles: [UserRole.PARTICIPANT],
         });
         return { id: nuevoUsuario.id, email: nuevoUsuario.email, fullName: nuevoUsuario.fullName } as UserRegisterReponseDto;
     }

@@ -1,11 +1,12 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { UserRole } from "../user-role.enum";
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ unique: true })
     email: string;
 
     @Column()
@@ -13,4 +14,10 @@ export class User {
 
     @Column()
     fullName: string;
+
+    @Column({
+        type: "simple-array",
+        nullable: true,
+    })
+    roles: UserRole[];
 }
