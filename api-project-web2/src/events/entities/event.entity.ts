@@ -30,6 +30,12 @@ export class EventEntity {
     @Column({ default: true })
     isActive: boolean;
 
+    @Column({ type: "double", nullable: true })
+    latitude?: number | null;
+
+    @Column({ type: "double", nullable: true })
+    longitude?: number | null;
+
     @ManyToOne(() => User, { eager: true })
     organizer: User;
 }
