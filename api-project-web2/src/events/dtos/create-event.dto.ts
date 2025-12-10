@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsNumberString, IsOptional, IsPositive, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsPositive, IsString } from "class-validator";
 
 export class CreateEventDto {
     @IsNotEmpty()
@@ -29,4 +30,14 @@ export class CreateEventDto {
     @IsOptional()
     @IsNumberString()
     price?: string;
+
+    @IsOptional()
+    @Type(() => Number)
+    @IsNumber()
+    latitude?: number;
+
+    @IsOptional()
+    @Type(() => Number)
+    @IsNumber()
+    longitude?: number;
 }

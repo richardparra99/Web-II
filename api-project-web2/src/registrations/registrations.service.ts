@@ -5,6 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { EventEntity } from "../events/entities/event.entity";
 import { CreateRegistrationDto } from "./dtos/create-registration.dto";
 import { randomUUID } from "crypto";
+import { PaymentEntity, PaymentStatus } from "../payments/entities/payment.entity";
 
 @Injectable()
 export class RegistrationsService {
@@ -14,6 +15,9 @@ export class RegistrationsService {
 
         @InjectRepository(EventEntity)
         private readonly eventsRepository: Repository<EventEntity>,
+
+        @InjectRepository(PaymentEntity)
+        private readonly paymentsRepository: Repository<PaymentEntity>,
     ) {}
 
     async create(dto: CreateRegistrationDto, participantId: number): Promise<RegistrationEntity> {
@@ -77,6 +81,16 @@ export class RegistrationsService {
         if (registration.participant.id !== userId) {
             throw new ForbiddenException("No puedes cancelar inscripciones de otros");
         }
+        const approvidePayment = await this.paymentsRepository.findOne({
+            where: {
+                registration: { id },
+                status: "APPROVED" as PaymentStatus,
+            },
+        });
+
+        if (approvidePayment) {
+            throw new BadRequestException("No puedes cancelar una inscripción con pago confirmado");
+        }
 
         if (registration.status === "CANCELLED") {
             throw new BadRequestException("La inscripción ya fue cancelada");
@@ -106,5 +120,45 @@ export class RegistrationsService {
             where: { event: { id: eventId } },
             order: { createdAt: "DESC" },
         });
+    }
+
+    async validateQrToken(token: string) {
+        const registration = await this.registrationRepository.findOne({
+            where: { qrToken: token },
+        });
+        if (!registration) {
+            return { status: "INVALID" as const };
+        }
+
+        // Podemos exigir que el evento siga activo
+        if (!registration.event.isActive) {
+            return { status: "INVALID" as const };
+        }
+
+        // Si quieres que solo cuenten las inscripciones CONFIRMED (pago aprobado)
+        if (registration.status !== "CONFIRMED") {
+            return { status: "INVALID" as const };
+        }
+
+        // Ya fue validado antes
+        if (registration.checkInAt) {
+            return {
+                status: "ALREADY_CHECKED_IN" as const,
+                participantName: registration.participant.fullName,
+                eventTitle: registration.event.title,
+                checkInAt: registration.checkInAt,
+            };
+        }
+
+        // Primera validación: marcar ingreso
+        registration.checkInAt = new Date();
+        await this.registrationRepository.save(registration);
+
+        return {
+            status: "VALID" as const,
+            participantName: registration.participant.fullName,
+            eventTitle: registration.event.title,
+            checkInAt: registration.checkInAt,
+        };
     }
 }

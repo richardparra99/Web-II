@@ -22,6 +22,8 @@ export class EventsService {
             posterUrl: dto.posterUrl,
             price: dto.price,
             organizer: { id: organizerId },
+            latitude: dto.latitude ?? null,
+            longitude: dto.longitude ?? null,
         });
         return this.eventsRepository.save(event);
     }
@@ -77,6 +79,12 @@ export class EventsService {
         }
         if (dto.price !== undefined) {
             event.price = dto.price ?? null;
+        }
+        if (dto.latitude !== undefined) {
+            event.latitude = dto.latitude;
+        }
+        if (dto.longitude !== undefined) {
+            event.longitude = dto.longitude;
         }
         return this.eventsRepository.save(event);
     }
