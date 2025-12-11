@@ -27,14 +27,13 @@ const getEventById = (id) => {
     });
 };
 
-// 🔹 SUBIR POSTER con multer (file)
+// SUBIR POSTER con multer (file)
 const uploadEventPoster = (file) => {
     const formData = new FormData();
-    formData.append("file", file); // 👈 el backend espera "file"
+    formData.append("file", file); // el backend espera "file"
 
     return new Promise((resolve, reject) => {
         apiCliente
-            // 👇 AQUÍ ESTABA EL PROBLEMA: la ruta correcta es /events/poster
             .post("/events/poster", formData)
             .then((response) => resolve(response.data)) // { url: 'http://localhost:3000/uploads/...' }
             .catch((error) => {
@@ -45,7 +44,7 @@ const uploadEventPoster = (file) => {
     });
 };
 
-// 🔹 Crear evento (usa la URL devuelta por uploadEventPoster)
+// Crear evento
 const createEvent = (eventData) => {
     return new Promise((resolve, reject) => {
         apiCliente
@@ -61,9 +60,26 @@ const createEvent = (eventData) => {
     });
 };
 
+// 🔹 NUEVO: actualizar evento
+const updateEvent = (id, eventData) => {
+    return new Promise((resolve, reject) => {
+        apiCliente
+            .patch(`/events/${id}`, eventData)
+            .then((response) => resolve(response.data))
+            .catch((error) => {
+                console.error(error);
+                const msg =
+                    error?.response?.data?.message || "Error al actualizar el evento";
+                alert(msg);
+                reject(error);
+            });
+    });
+};
+
 export {
     getPublicEvents,
     getEventById,
     createEvent,
     uploadEventPoster,
+    updateEvent,      // 👈 export nuevo
 };

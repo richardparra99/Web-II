@@ -43,7 +43,7 @@ export class EventsController {
     @UseInterceptors(
         FileInterceptor("file", {
             storage: diskStorage({
-                destination: "./uploads/poster",
+                destination: "./uploads/posters",
                 filename: (req, file, cb) => {
                     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
                     const ext = extname(file.originalname);

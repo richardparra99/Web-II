@@ -3,6 +3,7 @@ import axios from "axios";
 import { getAccessToken } from "../utils/TokenUtilities";
 
 const API_BASE_URL = "http://localhost:3000";
+export { API_BASE_URL }; // 👈 exportamos la constante
 
 const apiCliente = axios.create({
     baseURL: API_BASE_URL,
