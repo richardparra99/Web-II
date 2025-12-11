@@ -10,6 +10,7 @@ import EventDetails from './events/EventDetails.jsx';
 import CreateEvent from './events/CreateEvent.jsx';
 import MyRegistrations from "./registrations/MyRegistrations.jsx";
 import "leaflet/dist/leaflet.css";
+import EditEvent from './events/EditEvent.jsx';
 
 
 createRoot(document.getElementById('root')).render(
@@ -19,6 +20,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/" element={<EventsList />} />
         <Route path="/events/create" element={<CreateEvent />} />
         <Route path="/events/:id" element={<EventDetails />} />
+        <Route path="/events/:id/edit" element={<EditEvent />} />
         <Route path="/login" element={<FormLogin />} />
         <Route path="/register" element={<FormRegister />} />
         <Route path="/registrations/my" element={<MyRegistrations />}></Route>

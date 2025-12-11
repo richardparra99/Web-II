@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsPositive, IsString } from "class-validator";
+import { IsDateString, IsInt, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString, Min } from "class-validator";
 
 export class CreateEventDto {
     @IsNotEmpty()
@@ -15,12 +15,13 @@ export class CreateEventDto {
     location: string;
 
     @IsNotEmpty()
-    @IsString()
-    startDate: Date;
+    @IsDateString()
+    startDate: string;
 
     @IsNotEmpty()
-    @IsString()
-    @IsPositive()
+    @Type(() => Number)
+    @IsInt()
+    @Min(1)
     capacity: number;
 
     @IsOptional()
