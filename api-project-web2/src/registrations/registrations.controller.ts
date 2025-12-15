@@ -28,6 +28,19 @@ export class RegistrationsController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get("by-event/:eventId")
+    findByEventForOrganizer(@Param("eventId", ParseIntPipe) eventId: number, @Req() req: AuthRequest) {
+        const { userId, roles } = req.user;
+        const isOrganizerOrAdmin = roles?.includes(UserRole.ORGANIZER) || roles?.includes(UserRole.ADMIN);
+
+        if (!isOrganizerOrAdmin) {
+            throw new ForbiddenException("Solo organizadores o administradores pueden ver inscripciones de un evento");
+        }
+
+        return this.registrationsService.listByEventForOrganizer(eventId, userId);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Delete(":id")
     cancel(@Param("id", ParseIntPipe) id: number, @Req() req: AuthRequest) {
         const { userId } = req.user;

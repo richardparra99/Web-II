@@ -53,4 +53,20 @@ const cancelRegistration = (id) => {
     });
 };
 
-export { registerToEvent, getMyRegistrations, cancelRegistration };
+const getRegistrationsByEvent = (eventId) => {
+    return new Promise((resolve, reject) => {
+        apiCliente
+            .get(`/registrations/by-event/${eventId}`)
+            .then((response) => resolve(response.data))
+            .catch((error) => {
+                console.error(error);
+                const msg =
+                    error?.response?.data?.message ||
+                    "Error al cargar inscripciones del evento";
+                alert(msg);
+                reject(error);
+            });
+    });
+};
+
+export { registerToEvent, getMyRegistrations, cancelRegistration, getRegistrationsByEvent };

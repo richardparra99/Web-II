@@ -94,4 +94,25 @@ export class PaymentsService {
             order: { uploadedAt: "DESC" },
         });
     }
+
+    async findByRegistrationForUser(registrationId: number, userId: number, roles: UserRole[]): Promise<PaymentEntity | null> {
+        const registration = await this.registrationsRepo.findOne({
+            where: { id: registrationId },
+        });
+
+        if (!registration) {
+            throw new NotFoundException("Inscripción no encontrada");
+        }
+
+        const isAdmin = roles?.includes(UserRole.ADMIN) ?? false;
+        const isOwner = registration.participant.id === userId;
+        const isOrganizer = registration.event.organizer && registration.event.organizer.id === userId;
+
+        if (!isAdmin && !isOwner && !isOrganizer) {
+            throw new ForbiddenException("No puedes ver pagos de inscripciones de otros");
+        }
+
+        // Reutilizamos el método existente
+        return this.findByRegistration(registrationId);
+    }
 }

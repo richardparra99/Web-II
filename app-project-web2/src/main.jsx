@@ -11,6 +11,9 @@ import CreateEvent from './events/CreateEvent.jsx';
 import MyRegistrations from "./registrations/MyRegistrations.jsx";
 import "leaflet/dist/leaflet.css";
 import EditEvent from './events/EditEvent.jsx';
+import EventPayments from './payments/EventPayments.jsx';
+import UsersList from './admin/UsersList.jsx';
+import EventsStats from './admin/EventsStats.jsx';
 
 
 createRoot(document.getElementById('root')).render(
@@ -24,6 +27,9 @@ createRoot(document.getElementById('root')).render(
         <Route path="/login" element={<FormLogin />} />
         <Route path="/register" element={<FormRegister />} />
         <Route path="/registrations/my" element={<MyRegistrations />}></Route>
+        <Route path="/organizer/events/:id/payments" element={<EventPayments />} />
+        <Route path="/admin/users" element={<UsersList />} />
+        <Route path="/admin/stats" element={<EventsStats />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

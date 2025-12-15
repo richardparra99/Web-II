@@ -44,12 +44,6 @@ const EventsList = () => {
             <Container className="main-page">
                 <div className="d-flex justify-content-between align-items-center">
                     <h1>Eventos próximos</h1>
-
-                    {(isOrganizer || isAdmin) && (
-                        <Link to="/events/create" className="btn btn-success">
-                            Crear evento
-                        </Link>
-                    )}
                 </div>
 
                 {loading ? (
@@ -96,7 +90,7 @@ const EventsList = () => {
                                             <div className="mt-auto d-flex gap-2">
                                                 <Link
                                                     to={`/events/${ev.id}`}
-                                                    className="btn btn-primary btn-sm"
+                                                    className="btn btn-dark btn-sm"
                                                 >
                                                     Ver detalles
                                                 </Link>

@@ -9,6 +9,7 @@ import {
     ParseIntPipe,
     Patch,
     Post,
+    Query,
     Req,
     UploadedFile,
     UseGuards,
@@ -100,5 +101,16 @@ export class EventsController {
         const isAdmin = roles?.includes(UserRole.ADMIN) ?? false;
 
         return this.eventsService.remove(id, userId, isAdmin);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get("admin/stats")
+    getAdminStats(@Req() req: AuthRequest, @Query("from") from?: string, @Query("to") to?: string) {
+        const { roles } = req.user;
+        const isAdmin = roles?.includes(UserRole.ADMIN) ?? false;
+        if (!isAdmin) {
+            throw new ForbiddenException("Solo administradores pueden ver las estadísticas de eventos");
+        }
+        return this.eventsService.getAdminStats(from, to);
     }
 }

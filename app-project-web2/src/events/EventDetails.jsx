@@ -117,6 +117,10 @@ const EventDetails = () => {
     // puede editar si es ORGANIZER o ADMIN (el backend igual valida organizador/admin)
     const canEdit = isOrganizer || isAdmin;
 
+    // 👇 evento de pago (para mostrar botón de pagos)
+    const isPaidEvent =
+        event.price != null && Number(event.price) > 0;
+
     // 👇 hay coordenadas para mostrar el mapa
     const hasCoords =
         event.latitude != null &&
@@ -246,7 +250,7 @@ const EventDetails = () => {
                                     )}
 
                                     <Button
-                                        variant="secondary"
+                                        variant="dark"
                                         onClick={() => navigate("/")}
                                     >
                                         Volver a eventos
@@ -260,6 +264,20 @@ const EventDetails = () => {
                                             }
                                         >
                                             Editar evento
+                                        </Button>
+                                    )}
+
+                                    {/* 👇 NUEVO: solo organizador/admin y eventos de pago */}
+                                    {canEdit && isPaidEvent && (
+                                        <Button
+                                            variant="outline-info"
+                                            onClick={() =>
+                                                navigate(
+                                                    `/organizer/events/${event.id}/payments`,
+                                                )
+                                            }
+                                        >
+                                            Ver pagos del evento
                                         </Button>
                                     )}
                                 </div>
