@@ -1,4 +1,3 @@
-// src/services/UserService.js
 import apiCliente from "./apiCliente";
 
 // Listar todos los usuarios (solo admin en backend)

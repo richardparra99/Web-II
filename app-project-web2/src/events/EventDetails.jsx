@@ -1,3 +1,4 @@
+// src/events/EventDetails.jsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -11,12 +12,15 @@ import {
 } from "react-bootstrap";
 import Header from "../components/Header";
 import { getEventById } from "../../services/EventsService";
-import { registerToEvent } from "../../services/RegistrationsService";
+import {
+    registerToEvent,
+    getMyRegistrations,
+} from "../../services/RegistrationsService";
 import { getAccessToken } from "../../utils/TokenUtilities";
 import { API_BASE_URL } from "../../services/apiCliente";
 import useAuthentication from "../../hooks/useAuthentication";
 
-// 👇 Leaflet para mostrar el mapa en detalle
+// Leaflet
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 
 const formatDateTime = (isoString) => {
@@ -28,13 +32,11 @@ const formatDateTime = (isoString) => {
     });
 };
 
-// helper para armar la URL de la imagen
 const getPosterSrc = (posterUrl) => {
     if (!posterUrl) return null;
     if (posterUrl.startsWith("http://") || posterUrl.startsWith("https://")) {
         return posterUrl;
     }
-    // si viene como "/uploads/posters/archivo.jpg"
     return `${API_BASE_URL}${posterUrl}`;
 };
 
@@ -45,6 +47,7 @@ const EventDetails = () => {
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [registering, setRegistering] = useState(false);
+    const [alreadyRegistered, setAlreadyRegistered] = useState(false);
 
     const { isOrganizer, isAdmin } = useAuthentication();
 
@@ -53,6 +56,32 @@ const EventDetails = () => {
             setLoading(true);
             const data = await getEventById(id);
             setEvent(data);
+
+            const token = getAccessToken();
+            if (token) {
+                try {
+                    const regs = await getMyRegistrations();
+                    const currentId = Number(id);
+
+                    const found = regs.find((r) => {
+                        const evId =
+                            r.event?.id ??
+                            r.eventId ??
+                            r.eventData?.id ??
+                            null;
+                        const status = (r.status || "").toUpperCase();
+                        // Consideramos "ya inscrito" si NO está cancelada
+                        return evId === currentId && status !== "CANCELLED";
+                    });
+
+                    setAlreadyRegistered(Boolean(found));
+                } catch (err) {
+                    console.error("Error al cargar inscripciones del usuario", err);
+                    setAlreadyRegistered(false);
+                }
+            } else {
+                setAlreadyRegistered(false);
+            }
         } catch (err) {
             console.error(err);
             alert("Error al cargar el evento");
@@ -73,11 +102,19 @@ const EventDetails = () => {
             return;
         }
 
+        // Si por alguna razón ya está marcado como inscrito, no repetimos
+        if (alreadyRegistered) {
+            alert("Ya estás inscrito en este evento.");
+            return;
+        }
+
         try {
             setRegistering(true);
             await registerToEvent(Number(id));
             alert("Inscripción registrada correctamente");
-            navigate("/registrations/my");
+            setAlreadyRegistered(true); // ya no mostrar botón de inscribirse
+            // opcional: podrías también redirigir
+            // navigate("/registrations/my");
         } catch (err) {
             console.error(err);
         } finally {
@@ -114,14 +151,11 @@ const EventDetails = () => {
     const precioTexto =
         event.price != null ? `${Number(event.price).toFixed(2)} Bs` : "Gratis";
 
-    // puede editar si es ORGANIZER o ADMIN (el backend igual valida organizador/admin)
     const canEdit = isOrganizer || isAdmin;
 
-    // 👇 evento de pago (para mostrar botón de pagos)
     const isPaidEvent =
         event.price != null && Number(event.price) > 0;
 
-    // 👇 hay coordenadas para mostrar el mapa
     const hasCoords =
         event.latitude != null &&
         event.latitude !== undefined &&
@@ -155,7 +189,6 @@ const EventDetails = () => {
 
                         <Col md={hasPoster && posterSrc ? 8 : 12}>
                             <Card.Body>
-                                {/* Subtítulo / organizador */}
                                 <div className="d-flex justify-content-between align-items-start mb-2">
                                     <div>
                                         {event.organizer?.fullName && (
@@ -170,14 +203,12 @@ const EventDetails = () => {
                                     </Badge>
                                 </div>
 
-                                {/* Descripción */}
                                 {event.description && (
                                     <Card.Text className="mb-3">
                                         {event.description}
                                     </Card.Text>
                                 )}
 
-                                {/* Info principal */}
                                 <div className="mb-2">
                                     <strong>Fecha:</strong>{" "}
                                     {formatDateTime(event.startDate)}
@@ -192,7 +223,6 @@ const EventDetails = () => {
                                     </div>
                                 )}
 
-                                {/* Mapa con la ubicación exacta */}
                                 {hasCoords && (
                                     <div className="mt-3">
                                         <h5 className="mb-2">Mapa del evento</h5>
@@ -231,15 +261,24 @@ const EventDetails = () => {
                                 {/* Botones */}
                                 <div className="d-flex gap-2 mt-3 flex-wrap">
                                     {isLogged ? (
-                                        <Button
-                                            variant="success"
-                                            onClick={onRegisterClick}
-                                            disabled={registering}
-                                        >
-                                            {registering
-                                                ? "Inscribiendo..."
-                                                : "Inscribirme"}
-                                        </Button>
+                                        alreadyRegistered ? (
+                                            <Button
+                                                variant="outline-success"
+                                                disabled
+                                            >
+                                                Ya estás inscrito en este evento
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="success"
+                                                onClick={onRegisterClick}
+                                                disabled={registering}
+                                            >
+                                                {registering
+                                                    ? "Inscribiendo..."
+                                                    : "Inscribirme"}
+                                            </Button>
+                                        )
                                     ) : (
                                         <Button
                                             variant="primary"
@@ -267,7 +306,6 @@ const EventDetails = () => {
                                         </Button>
                                     )}
 
-                                    {/* 👇 NUEVO: solo organizador/admin y eventos de pago */}
                                     {canEdit && isPaidEvent && (
                                         <Button
                                             variant="outline-info"

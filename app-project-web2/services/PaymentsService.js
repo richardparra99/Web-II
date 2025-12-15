@@ -1,11 +1,7 @@
-// services/PaymentsService.js
 import apiCliente from "./apiCliente";
 
 /**
- * 1) Subir archivo de comprobante (imagen/PDF/etc.)
- *    POST /payments/receipt
- *    Body: form-data con campo "file"
- *    Respuesta: { url: "http://localhost:3000/uploads/receipts/xxx.png" }
+ * 1) Subir archivo de comprobante
  */
 const uploadPaymentReceipt = (file) => {
     const formData = new FormData();
@@ -28,8 +24,6 @@ const uploadPaymentReceipt = (file) => {
 
 /**
  * 2) Registrar el pago con la URL del comprobante
- *    POST /payments
- *    Body: { registrationId, receiptUrl }
  */
 const createPayment = ({ registrationId, receiptUrl }) => {
     return new Promise((resolve, reject) => {
@@ -49,8 +43,6 @@ const createPayment = ({ registrationId, receiptUrl }) => {
 
 /**
  * 3) Obtener el último pago de una inscripción
- *    GET /payments/by-registration/:registrationId
- *    Respuesta: PaymentEntity o null
  */
 const getPaymentByRegistration = (registrationId) => {
     return new Promise((resolve, reject) => {
@@ -75,9 +67,6 @@ const getPaymentByRegistration = (registrationId) => {
 
 /**
  * 4) Aprobar / Rechazar pago
- *    PATCH /payments/:id
- *    Body: { status: "APPROVED" | "REJECTED" }
- *    Solo ORGANIZER o ADMIN (backend ya valida)
  */
 const reviewPayment = (paymentId, status) => {
     return new Promise((resolve, reject) => {

@@ -5,7 +5,7 @@ const registerToEvent = (eventId) => {
         apiCliente
             .post("/registrations", { eventId })
             .then((response) => {
-                resolve(response.data); // devuelve la inscripción creada
+                resolve(response.data);
             })
             .catch((error) => {
                 console.error(error);

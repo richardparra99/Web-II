@@ -1,4 +1,3 @@
-// services/EventsService.js
 import apiCliente from "./apiCliente";
 
 const getPublicEvents = () => {
@@ -30,12 +29,12 @@ const getEventById = (id) => {
 // SUBIR POSTER con multer (file)
 const uploadEventPoster = (file) => {
     const formData = new FormData();
-    formData.append("file", file); // el backend espera "file"
+    formData.append("file", file);
 
     return new Promise((resolve, reject) => {
         apiCliente
             .post("/events/poster", formData)
-            .then((response) => resolve(response.data)) // { url: 'http://localhost:3000/uploads/...' }
+            .then((response) => resolve(response.data))
             .catch((error) => {
                 console.error(error);
                 alert("Error al subir la imagen");
@@ -60,7 +59,7 @@ const createEvent = (eventData) => {
     });
 };
 
-// 🔹 NUEVO: actualizar evento
+//NUEVO: actualizar evento
 const updateEvent = (id, eventData) => {
     return new Promise((resolve, reject) => {
         apiCliente
@@ -76,8 +75,7 @@ const updateEvent = (id, eventData) => {
     });
 };
 
-// ✅ Obtener estadísticas de eventos (solo admin en backend)
-// GET /events/admin/stats?from=YYYY-MM-DD&to=YYYY-MM-DD
+//Obtener estadísticas de eventos (solo admin en backend)
 const getAdminEventStats = (from, to) => {
     const params = {};
     if (from) params.from = from;
@@ -104,6 +102,6 @@ export {
     getEventById,
     createEvent,
     uploadEventPoster,
-    updateEvent,   // 👈 export nuevo
+    updateEvent,
     getAdminEventStats
 };

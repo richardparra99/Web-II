@@ -1,4 +1,3 @@
-// src/events/CreateEvent.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -95,7 +94,6 @@ const CreateEvent = () => {
         if (posterFile) {
             try {
                 const uploadResp = await uploadEventPoster(posterFile);
-                // El backend devuelve { url: "http://localhost:3000/uploads/posters/xxx.jpg" }
                 posterUrlToSave = uploadResp.url;
             } catch (err) {
                 console.error(err);

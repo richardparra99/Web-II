@@ -1,4 +1,3 @@
-// src/admin/EventsStats.jsx
 import { useEffect, useState } from "react";
 import {
     Badge,

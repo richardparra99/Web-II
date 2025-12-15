@@ -9,7 +9,6 @@ const login = (loginData) => {
                 const data = response.data;
 
                 // Soportar los 3 nombres típicos:
-                // { accessToken }, { access_token } o { token }
                 const accessToken =
                     data.accessToken ?? data.access_token ?? data.token;
 
@@ -20,7 +19,7 @@ const login = (loginData) => {
                     return;
                 }
 
-                // 👀 Aquí NO decodificamos nada, solo devolvemos el token
+                //Aquí NO decodificamos nada, solo devolvemos el token
                 resolve({ accessToken });
             })
             .catch((error) => {
@@ -36,7 +35,7 @@ const register = (registerData) => {
         apiCliente
             .post("/auth/register", registerData)
             .then((response) => {
-                resolve(response.data); // { id, email, fullName }
+                resolve(response.data);
             })
             .catch((error) => {
                 console.error(error);
