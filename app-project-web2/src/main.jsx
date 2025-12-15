@@ -14,6 +14,7 @@ import EditEvent from './events/EditEvent.jsx';
 import EventPayments from './payments/EventPayments.jsx';
 import UsersList from './admin/UsersList.jsx';
 import EventsStats from './admin/EventsStats.jsx';
+import ValidatorPage from './validator/ValidatorPage.jsx';
 
 
 createRoot(document.getElementById('root')).render(
@@ -30,6 +31,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/organizer/events/:id/payments" element={<EventPayments />} />
         <Route path="/admin/users" element={<UsersList />} />
         <Route path="/admin/stats" element={<EventsStats />} />
+        <Route path="/validator" element={<ValidatorPage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

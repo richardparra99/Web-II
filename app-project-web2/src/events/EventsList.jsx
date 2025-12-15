@@ -1,4 +1,3 @@
-// src/events/EventsList.jsx
 import { useEffect, useState } from "react";
 import { Card, Col, Container, Row, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";

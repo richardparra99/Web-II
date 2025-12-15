@@ -1,20 +1,24 @@
-// src/components/Header.jsx
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { getAccessToken } from "../../utils/TokenUtilities";
 import useAuthentication from "../../hooks/useAuthentication";
 
 const Header = () => {
-    const { doLogout, userEmail, isOrganizer, isAdmin } = useAuthentication();
+    const { doLogout, userEmail, isOrganizer, isAdmin, isValidator } =
+        useAuthentication();
     const token = getAccessToken();
     const isLogged = !!token;
+
+    // participante = logueado pero NO admin, NO organizer, NO validator
+    const isPureParticipant =
+        isLogged && !isAdmin && !isOrganizer && !isValidator;
+
+    // 👇 ahora SOLO el rol validator puede ver esta opción
+    const canValidate = isLogged && isValidator;
 
     const onLogoutClick = () => {
         doLogout();
     };
-
-    // participante = logueado pero NO admin y NO organizer
-    const isPureParticipant = isLogged && !isAdmin && !isOrganizer;
 
     return (
         <Navbar bg="dark" data-bs-theme="dark" expand="lg">
@@ -32,7 +36,7 @@ const Header = () => {
                             </Link>
                         )}
 
-                        {/* PARTICIPANTE (logueado, NO admin, NO organizer) */}
+                        {/* PARTICIPANTE puro */}
                         {isPureParticipant && (
                             <>
                                 <Link className="nav-link" to="/">
@@ -74,7 +78,7 @@ const Header = () => {
                             </>
                         )}
 
-                        {/* SOLO ADMIN: Administración (sin Eventos ni Mis inscripciones) */}
+                        {/* SOLO ADMIN: Administración */}
                         {isLogged && isAdmin && (
                             <NavDropdown
                                 title="Administración"
@@ -93,6 +97,13 @@ const Header = () => {
                                     Estadísticas
                                 </NavDropdown.Item>
                             </NavDropdown>
+                        )}
+
+                        {/* VALIDACIÓN DE QR (solo VALIDATOR) */}
+                        {canValidate && (
+                            <Link className="nav-link" to="/validator">
+                                Validar QR
+                            </Link>
                         )}
                     </Nav>
 

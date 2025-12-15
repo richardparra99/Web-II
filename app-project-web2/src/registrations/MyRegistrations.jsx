@@ -1,4 +1,3 @@
-// src/registrations/MyRegistrations.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -205,7 +204,7 @@ const MyRegistrations = () => {
                                 badgeVariant = "warning";
                             }
 
-                            // 👇 REGLA NUEVA: solo mostramos QR si la inscripción está CONFIRMED
+                            //solo mostramos QR si la inscripción está CONFIRMED
                             const canShowQrOnCard = isConfirmed;
 
                             return (

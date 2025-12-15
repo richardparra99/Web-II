@@ -13,13 +13,12 @@ export class ValidationController {
     async validate(@Param("token") token: string, @Req() req: AuthRequest) {
         const { roles } = req.user;
 
-        const isValidator = roles?.includes(UserRole.VALIDATOR) || roles?.includes(UserRole.ADMIN);
+        const isValidator = roles?.includes(UserRole.VALIDATOR) || roles?.includes(UserRole.ADMIN) || roles?.includes(UserRole.ORGANIZER);
 
         if (!isValidator) {
             throw new ForbiddenException("Solo los validadores pueden validar QR");
         }
 
-        // Delegamos la lógica al service
         return this.registrationsService.validateQrToken(token);
     }
 }

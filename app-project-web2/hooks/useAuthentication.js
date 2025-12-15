@@ -1,4 +1,3 @@
-// src/hooks/useAuthentication.js
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -48,8 +47,10 @@ const useAuthentication = (checkOnLoad = false) => {
     const userEmail =
         decoded?.email ?? localStorage.getItem("userEmail") ?? "";
     const roles = decoded?.roles ?? [];
+
     const isOrganizer = roles.includes("ORGANIZER");
     const isAdmin = roles.includes("ADMIN");
+    const isValidator = roles.includes("VALIDATOR");
 
     useEffect(() => {
         if (!checkOnLoad) return;
@@ -64,6 +65,7 @@ const useAuthentication = (checkOnLoad = false) => {
         roles,
         isOrganizer,
         isAdmin,
+        isValidator,
     };
 };
 

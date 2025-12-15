@@ -65,6 +65,7 @@ export class RegistrationsService {
                 participant: { id: userId },
                 status: Not("CANCELLED"),
             },
+            relations: ["event"],
             order: { createdAt: "DESC" },
         });
     }
