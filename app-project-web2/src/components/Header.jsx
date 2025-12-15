@@ -7,13 +7,17 @@ import useAuthentication from "../../hooks/useAuthentication";
 const Header = () => {
     const { doLogout, userEmail, isOrganizer, isAdmin } = useAuthentication();
     const token = getAccessToken();
+    const isLogged = !!token;
 
     const onLogoutClick = () => {
         doLogout();
     };
 
+    // participante = logueado pero NO admin y NO organizer
+    const isPureParticipant = isLogged && !isAdmin && !isOrganizer;
+
     return (
-        <Navbar bg="primary" data-bs-theme="dark">
+        <Navbar bg="dark" data-bs-theme="dark" expand="lg">
             <Container>
                 <Navbar.Brand as={Link} to="/">
                     Event Planner
@@ -21,32 +25,79 @@ const Header = () => {
                 <Navbar.Toggle aria-controls="navbarScroll" />
                 <Navbar.Collapse id="navbarScroll">
                     <Nav className="me-auto my-2 my-lg-0" navbarScroll>
-                        <Link className="nav-link" to="/">
-                            Eventos
-                        </Link>
-
-                        {token && (
-                            <Link
-                                className="nav-link"
-                                to="/registrations/my"
-                            >
-                                Mis inscripciones
+                        {/* VISITANTE (sin login): solo Eventos */}
+                        {!isLogged && (
+                            <Link className="nav-link" to="/">
+                                Eventos
                             </Link>
                         )}
 
-                        {/* SOLO ORGANIZER o ADMIN */}
-                        {token && (isOrganizer || isAdmin) && (
-                            <Link
-                                className="nav-link"
-                                to="/events/create"
+                        {/* PARTICIPANTE (logueado, NO admin, NO organizer) */}
+                        {isPureParticipant && (
+                            <>
+                                <Link className="nav-link" to="/">
+                                    Eventos
+                                </Link>
+                                <Link
+                                    className="nav-link"
+                                    to="/registrations/my"
+                                >
+                                    Mis inscripciones
+                                </Link>
+                            </>
+                        )}
+
+                        {/* ORGANIZADOR (logueado, NO admin) */}
+                        {isLogged && isOrganizer && !isAdmin && (
+                            <>
+                                <NavDropdown
+                                    title="Eventos"
+                                    id="events-dropdown"
+                                >
+                                    <NavDropdown.Item as={Link} to="/">
+                                        Ver eventos
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item
+                                        as={Link}
+                                        to="/events/create"
+                                    >
+                                        Crear evento
+                                    </NavDropdown.Item>
+                                </NavDropdown>
+
+                                <Link
+                                    className="nav-link"
+                                    to="/registrations/my"
+                                >
+                                    Mis inscripciones
+                                </Link>
+                            </>
+                        )}
+
+                        {/* SOLO ADMIN: Administración (sin Eventos ni Mis inscripciones) */}
+                        {isLogged && isAdmin && (
+                            <NavDropdown
+                                title="Administración"
+                                id="admin-dropdown"
                             >
-                                Crear evento
-                            </Link>
+                                <NavDropdown.Item
+                                    as={Link}
+                                    to="/admin/users"
+                                >
+                                    Usuarios
+                                </NavDropdown.Item>
+                                <NavDropdown.Item
+                                    as={Link}
+                                    to="/admin/stats"
+                                >
+                                    Estadísticas
+                                </NavDropdown.Item>
+                            </NavDropdown>
                         )}
                     </Nav>
 
                     <Nav>
-                        {token ? (
+                        {isLogged ? (
                             <NavDropdown
                                 title={userEmail}
                                 id="logout-dropdown"
