@@ -1,4 +1,3 @@
-// src/services/ValidationService.js
 import apiCliente from "./apiCliente";
 
 const validateQrToken = (token) => {

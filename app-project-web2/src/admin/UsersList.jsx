@@ -19,7 +19,7 @@ import {
     deleteUser,
 } from "../../services/UserService";
 
-const ALL_ROLES = ["ADMIN", "ORGANIZER", "PARTICIPANT"];
+const ALL_ROLES = ["ADMIN", "ORGANIZER", "PARTICIPANT", "VALIDATOR"];
 
 const UsersList = () => {
     const { isAdmin } = useAuthentication(true); // requiere login
